@@ -1,0 +1,53 @@
+<form class="uk-form uk-form-horizontal" action="{site_admin_url}/plugins/testimonials/index.php" method="post">
+  <input type="hidden" name="testid" value="{row_testid}">
+
+  <div class="uk-form-row">
+    <label class="uk-form-label">{client_text}</label>
+    <div class="uk-form-controls">
+      <input type="text" name="clientname" size="30" value="{row_client}">
+    </div>
+  </div>
+  <div class="uk-form-row">
+    <label class="uk-form-label">{company_text}</label>
+    <div class="uk-form-controls">
+      <input type="text" name="company" size="30" value="{row_company}">
+    </div>
+  </div>
+  <div class="uk-form-row">
+    <label class="uk-form-label">{testdate_text}</label>
+    <div class="uk-form-controls">
+      <input type="text" name="tstdate" size="30" value="{row_tstdate}">
+      <span class="uk-form-help-inline">{date_help}</span>
+    </div>
+  </div>
+  <div class="uk-form-row">
+    <label class="uk-form-label">{url_text}</label>
+    <div class="uk-form-controls">
+      <input type="text" name="testurl" size="50" value="{row_testurl}">
+      <span class="uk-form-help-inline">{url_help}</span>
+    </div>
+  </div>
+  <div class="uk-form-row">
+    <label class="uk-form-label">{testa_text_short}</label>
+    <div class="uk-form-controls">
+      <textarea name="text_short" rows="5" cols="60">{row_text_short}</textarea>
+      <span class="uk-form-help-inline">{text_short_help}</span>
+    </div>
+  </div>
+  <div class="uk-form-row">
+    <label class="uk-form-label">{testa_text_full}</label>
+    <div class="uk-form-controls">
+      <textarea name="text_full" rows="10" cols="60">{row_text_full}</textarea>
+      <span class="uk-form-help-inline">{text_help}</span>
+    </div>
+  </div>
+
+  <button class="uk-button uk-button-primary" type="submit" name="save" value="x">{lang_save}</button>
+{!if cancel_option}
+  <button class="uk-button" type="cancel" name="cancel">{lang_cancel}</button>
+{!endif}
+{!if delete_option}
+  <button class="uk-button uk-button-danger" name="delete">{lang_delete}</button>
+{!endif}
+
+</form>

@@ -1,0 +1,10 @@
+<plugin>
+    <id>testimonials</id>
+    <name>Testimonials</name>
+    <description>Allows customers to provide feedback</description>
+    <version>2.0.0</version>
+    <glfusionversion>1.6.0</glfusionversion>
+    <phpversion>5.3.3</phpversion>
+    <url>https://www.glfusion.org</url>
+    <maintainer>Mark R. Evans</maintainer>
+</plugin>
