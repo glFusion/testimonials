@@ -23,14 +23,7 @@ The Testimonials Plugin uses the glFusion automated plugin installer. Simply upl
 
 ### UPGRADING
 
-Tag v2.0.0 is a complete rewrite which requires some special upgrade handling when upgrading from earlier versions.
-
-Once you have uploaded the latest Tag Plugin through the glFusion Plugin Administration screen and selected upgrade, you will need to do the following:
-
-1 .Navigate to the Command & Control -> Tag administration screen.
-2. Select **Rescan Content**. This will rescan all glFusion content and rebuild the tag mappings.
-
-Once you have completed the steps above, you should be ready to go.
+The upgrade process is identical to the installation process, simply upload the distribution from the Plugin Administration page.
 
 ### CONFIGURATION
 
