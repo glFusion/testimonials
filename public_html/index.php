@@ -41,6 +41,21 @@ function TST_truncate($string, $length, $trimmarker = '') {
 * Main Function
 */
 
+$limit = $_TST_CONF['per_page'];
+
+$page = 1;
+if (isset ($_GET['page'])) {
+    $page = (int) COM_applyFilter ($_GET['page'], true);
+    if ($page == 0) {
+        $page = 1;
+    }
+}
+$offset = intval(($page - 1) * $limit);
+
+$data = DB_query ("SELECT COUNT(*) AS count FROM {$_TABLES['testimonials']} WHERE queued=0");
+$D = DB_fetchArray ($data);
+$num_pages = ceil ($D['count'] / $limit);
+
 $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
 
 $T->set_file (array (
@@ -49,8 +64,14 @@ $T->set_file (array (
 
 $T->set_var ('header', $LANG_TSTM01['header']);
 
-$result = DB_query ("SELECT testid,clientname,company,text_full,text_short,homepage FROM " . $_TABLES['testimonials'] . " WHERE queued=0 ORDER BY tst_date DESC");
+$sql = "SELECT testid,clientname,company,text_full,text_short,homepage "
+       ."FROM {$_TABLES['testimonials']} WHERE queued=0 ORDER BY tst_date DESC "
+       ."LIMIT ".$offset.",".$limit;
+
+$result = DB_query ($sql);
 $num = DB_numRows ($result);
+
+$pagination = COM_printPageNavigation ($_CONF['site_url'].'/testimonials/index.php', $page, $num_pages);
 
 if ( $num === 0 ) {
     $T->set_var('no_testimonials',true);
@@ -59,10 +80,14 @@ if ( $num === 0 ) {
 
 $T->set_var(array(
     'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
-    'lang_submit_testimonial' => $LANG_TSTM01['submit_testimonial'],
     'lang_more' => $LANG_TSTM01['more'],
     'lang_less' => $LANG_TSTM01['less'],
+    'pagination' => $pagination,
 ));
+
+if ( !COM_isAnonUser() || $_TST_CONF['anonymous_submit'] == true ) {
+    $T->set_var('lang_submit_testimonial',$LANG_TSTM01['submit_testimonial']);
+}
 
 $T->set_block('page','testimonials','tm');
 
@@ -97,7 +122,7 @@ for ($i = 0; $i < $num; $i++) {
 $T->parse('output', 'page');
 $page = $T->finish($T->get_var('output'));
 
-$display = COM_siteHeader();
+$display = COM_siteHeader($_TST_CONF['menu'],$LANG_TSTM01['plugin_name']);
 $display .= $page;
 $display .= COM_siteFooter();
 
