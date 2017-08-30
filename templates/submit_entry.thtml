@@ -30,10 +30,13 @@
   </div>
 
   <div class="uk-form-row">
-    <label class="uk-form-label">{testa_text_short}</label>
+    <label class="uk-form-label">
+	    {testa_text_short}
+      <div class="uk-text-muted">{text_short_help}</div>
+    </label>
     <div class="uk-form-controls">
-      <textarea class="required" name="text_short" rows="5" cols="60">{row_text_short}</textarea>
-      <span class="uk-form-help-inline">{text_short_help}</span>
+      <textarea class="required" name="text_short" id="text_short" rows="3" cols="60">{row_text_short}</textarea>
+      <div id="result">Word Count: 0</div>
     </div>
   </div>
 
@@ -51,6 +54,20 @@
   </div>
 </form>
 <script>
+function wordCount( val ){
+	var wom = val.match(/\S+/g);
+	return {
+		words : wom ? wom.length : 0,
+	};
+}
+var Textarea = document.getElementById("text_short");
+var result   = document.getElementById("result");
+Textarea.addEventListener("input", function(){
+	var v = wordCount( this.value );
+	result.innerHTML = (
+	"Word Count: "+ v.words
+	);
+}, false);
 $( "#testimonialinput" ).validate();
 </script>
 {# end {templatelocation} #}
