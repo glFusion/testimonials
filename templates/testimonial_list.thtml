@@ -1,20 +1,39 @@
 {# begin {templatelocation} #}
-<div class="uk-container">
+<div class="uk-container testimonial">
   <h2 class="uk-align-left">What Our Customers Are Saying...</h2>
-  <h2 class="uk-align-right">Submit a Testimonial</h2>
+  <a class="uk-button uk-button-small uk-button-success uk-align-right" href="{site_url}/testimonials/submit.php">Submit a Testimonial</a>
   <div style="clear:both;"></div>
 
   <!-- BEGIN testimonials -->
-  <div class="uk-panel uk-panel-box uk-panel-box-primary uk-margin">
-    <div class="uk-text-success uk-text-large uk-margin">"{text_full}"</div>
-    <div class="uk-text-bold">{client}</div>
-{!if company_url}
-    <a href="{company_url}" target="_blank">{company_name}</a>
-{!else}
-    {company_name}
+  <div class="uk-panel uk-panel-box uk-margin">
+{#    <div class="uk-panel-title">{client}</div> #}
+{!if text_remaining}
+    <a class="uk-panel-badge uk-badge" data-uk-toggle="{ target: '#more{testid}' }">Expand</a>
 {!endif}
+
+    <blockquote>
+      {text_truncated}{!if text_remaining}<span class="uk-hidden" id="more{testid}">{text_remaining}</span>{!endif}
+</blockquote>
+	<footer>
+  <cite>
+
+{!if company_url}
+    <a href="{company_url}" target="_blank">{client}{!if company_name} :: {company_name}{!endif}</a>
+{!else}
+    {client}{!if company_name} :: {company_name}{!endif}
+{!endif}
+  </cite>
+</footer>
 
   </div>
   <!-- END testimonials -->
+
+{!if no_testimonials}
+	<div class="uk-panel uk-panel-box uk-alert-warning">
+		<div class="uk-text-large uk-text-center">
+			No Testimonials Have Been Submitted.
+		</div>
+	</div>
+{!endif}
 </div>
 {# end {templatelocation} #}

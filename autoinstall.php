@@ -45,21 +45,13 @@ $INSTALL_plugin['testimonials'] = array(
     array('type' => 'group', 'group' => 'testimonials Admin', 'desc' => 'Users in this group can administer the Testimonials plugin',
         'variable' => 'admin_group_id', 'addroot' => true, 'admin' => true),
 
-    array('type' => 'group', 'group' => 'testimonials Users', 'desc' => 'Users of the Testimonials Plugin',
-            'variable' => 'user_group_id', 'addroot' => true, 'default' => true),
-
     array('type' => 'feature', 'feature' => 'testimonials.admin', 'desc' => 'Ability to administer the Testimonials plugin',
             'variable' => 'admin_feature_id'),
-
-    array('type' => 'feature', 'feature' => 'testimonials.view', 'desc' => 'Ability to view the Testimonials plugin',
-            'variable' => 'user_feature_id'),
-
-    array('type' => 'mapping', 'group' => 'user_group_id', 'feature' => 'user_feature_id', 'log' => 'Adding Testimonials view feature to all users'),
 
     array('type' => 'mapping', 'group' => 'admin_group_id', 'feature' => 'admin_feature_id',
             'log' => 'Adding testimonials.admin feature to the Testimonials admin group'),
 
-  array('type' => 'block', 'name' => 'block_testimonials', 'title' => 'Testimonials',
+    array('type' => 'block', 'name' => 'block_testimonials', 'title' => 'Testimonials',
           'phpblockfn' => 'phpblock_testimonials', 'block_type' => 'phpblock',
           'group_id' => 'admin_group_id' , 'onleft' => true),
 );
@@ -110,9 +102,9 @@ function plugin_autouninstall_testimonials ()
         /* give the name of the tables, without $_TABLES[] */
         'tables' => array('testimonials'),
         /* give the full name of the group, as in the db */
-        'groups' => array('testimonials Admin','testimonials Users'),
+        'groups' => array('testimonials Admin'),
         /* give the full name of the feature, as in the db */
-        'features' => array('testimonials.admin','testimonials.view'),
+        'features' => array('testimonials.admin'),
         /* give the full name of the block, including 'phpblock_', etc */
         'php_blocks' => array('phpblock_testimonials'),
         /* give all vars with their name */

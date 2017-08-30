@@ -86,11 +86,16 @@ function listEntries()
             'chkactions' => $actions
     );
 
+    $token = SEC_createToken();
+
     $formfields = '
-            <input name="action" type="hidden" value="delete">
+        <input name="action" type="hidden" value="delete">
+        <input type="hidden" name="' . CSRF_TOKEN . '" value="'. $token .'">
     ';
 
-    $form_arr = array('top' => $formfields);
+    $form_arr = array(
+        'top' => $formfields
+    );
 
     $retval .= ADMIN_list('taglist', 'TST_getListField', $header_arr,
     $text_arr, $query_arr, $defsort_arr, $filter, "", $option_arr, $form_arr);
@@ -187,6 +192,12 @@ function saveEntry()
     }
     COM_setMsg( 'Testimonial Successfully Saved.', 'warning' );
 
+    $src = 'adm';
+    if ( isset($_POST['src']) ) {
+        $src = COM_applyFilter($_POST['src']);
+    }
+    if ( $src == 'mod' ) COM_refresh($_CONF['site_admin_url'].'/moderation.php');
+
     return listEntries();
 }
 
@@ -197,8 +208,11 @@ function editEntry($mode,$testid='')
     $retval = '';
     $display = '';
 
-    $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
-    $T->set_file ('form','newentry.thtml');
+    $src = 'adm';
+    if ( isset($_GET['src']) && $_GET['src'] == 'mod' ) $src = 'mod';
+
+    $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates/admin');
+    $T->set_file ('form','edit_entry.thtml');
 
     $T->set_var(array(
         'client_text'       => $LANG_TSTM01['client'],
@@ -215,6 +229,9 @@ function editEntry($mode,$testid='')
         'date_help'         => 'yyyy-mm-dd format',
         'lang_save'         => $LANG_TSTM01['save'],
         'lang_cancel'       => $LANG_TSTM01['cancel'],
+        'src'               => $src,
+        'sec_token'         => SEC_createToken(),
+        'sec_token_name'    => CSRF_TOKEN,
     ));
 
     if ($mode == 'edit') {
@@ -275,7 +292,7 @@ function tst_admin_menu($action)
 
     return $retval;
 }
-//var_dump($_POST);exit;
+
 $page = '';
 $display = '';
 $cmd ='list';
@@ -288,7 +305,11 @@ foreach ( $expectedActions AS $action ) {
         $cmd = $action;
     }
 }
-if ( isset($_POST['cancel'])) $cmd = 'list';
+if ( isset($_POST['cancel'])) {
+    $src = COM_applyFilter($_POST['cancel']);
+    if ( $src == 'mod' ) COM_refresh($_CONF['site_admin_url'].'/moderation.php');
+    $cmd = 'list';
+}
 
 switch ( $cmd ) {
     case 'edit' :
@@ -299,11 +320,17 @@ switch ( $cmd ) {
         }
         break;
     case 'save' :
-        $page = saveEntry();
+        if (SEC_checkToken()) {
+            $page = saveEntry();
+        } else {
+            $page = listEntries();
+        }
         break;
 
     case  'delsel_x':
-        delEntry();
+        if (SEC_checkToken()) {
+            delEntry();
+        }
         $page = listEntries();
         break;
 

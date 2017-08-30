@@ -1,0 +1,48 @@
+
+<h2>Submit Testimonial</h2>
+
+<form class="uk-form uk-form-horizontal" action="{site_url}/testimonials/submit.php" method="post">
+  <input type="hidden" name="{sec_token_name}" value="{sec_token}">
+
+  <div class="uk-form-row">
+    <label class="uk-form-label">Your Name</label>
+    <div class="uk-form-controls">
+      <input type="text" name="clientname" size="30" value="{row_client}">
+    </div>
+  </div>
+
+  <div class="uk-form-row">
+    <label class="uk-form-label">Company Name</label>
+    <div class="uk-form-controls">
+      <input type="text" name="company" size="30" value="{row_company}">
+    </div>
+  </div>
+
+  <div class="uk-form-row">
+    <label class="uk-form-label">Company Website</label>
+    <div class="uk-form-controls">
+      <input type="text" name="testurl" size="50" value="{row_testurl}">
+    </div>
+  </div>
+  <div class="uk-form-row">
+    <label class="uk-form-label">{testa_text_short}</label>
+    <div class="uk-form-controls">
+      <textarea name="text_short" rows="5" cols="60">{row_text_short}</textarea>
+      <span class="uk-form-help-inline">{text_short_help}</span>
+    </div>
+  </div>
+  <div class="uk-form-row">
+    <label class="uk-form-label">{testa_text_full}</label>
+    <div class="uk-form-controls">
+      <textarea name="text_full" rows="10" cols="60">{row_text_full}</textarea>
+      <span class="uk-form-help-inline">{text_help}</span>
+    </div>
+  </div>
+
+  <div class="uk-form-row uk-text-center">
+    <button class="uk-button uk-button-primary" type="submit" name="save" value="x">{lang_save}</button>
+    <button class="uk-button" type="cancel" name="cancel">{lang_cancel}</button>
+  </div>
+
+
+</form>

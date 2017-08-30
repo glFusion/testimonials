@@ -1,36 +1,22 @@
 <?php
-// +--------------------------------------------------------------------------+
-// | Testimonials Plugin for glFusion                                         |
-// +--------------------------------------------------------------------------+
-// | functions.inc                                                            |
-// |                                                                          |
-// | glFusion integration APIs                                                |
-// +--------------------------------------------------------------------------+
-// | Copyright (C) 2016-2017 by the following authors:                        |
-// |                                                                          |
-// | Mark R. Evans          mark AT glfusion DOT org                          |
-// |                                                                          |
-// | Based on the Testimonials Plugin                                         |
-// | Copyright (C) 2006 by the following authors:                             |
-// |                                                                          |
-// | Authors: Jodi Diehl        - scripts AT sunfrogservices DOTcom           |
-// +--------------------------------------------------------------------------+
-// |                                                                          |
-// | This program is free software; you can redistribute it and/or            |
-// | modify it under the terms of the GNU General Public License              |
-// | as published by the Free Software Foundation; either version 2           |
-// | of the License, or (at your option) any later version.                   |
-// |                                                                          |
-// | This program is distributed in the hope that it will be useful,          |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
-// | GNU General Public License for more details.                             |
-// |                                                                          |
-// | You should have received a copy of the GNU General Public License        |
-// | along with this program; if not, write to the Free Software Foundation,  |
-// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.          |
-// |                                                                          |
-// +--------------------------------------------------------------------------+
+/**
+* glFusion CMS
+*
+* Testimonials - Testimonials Plugin for glFusion
+*
+* glFusion Interface functions.inc
+*
+* @license GNU General Public License version 2 or later
+*     http://www.opensource.org/licenses/gpl-license.php
+*
+*  Copyright (C) 2016-2017 by the following authors:
+*   Mark R. Evans   mark AT glfusion DOT org
+*
+*  Based on the Testimonials Plugin
+*  Copyright (C) 2006 by the following authors:
+*  Authors: Jodi Diehl - scripts AT sunfrogservices DOTcom
+*
+*/
 
 if (!defined ('GVERSION')) {
     die ('This file can not be used on its own.');
@@ -52,6 +38,12 @@ if (file_exists ($langfile)) {
 */
 require_once $_CONF['path'] . 'plugins/testimonials/testimonials.php';
 
+// temporary configuration settings
+$_TST_CONF['show_blocks'] = 0;
+$_TST_CONF['anonymous_submit'] = 1;
+$_TST_CONF['queue_submissions'] = 1;
+
+
 /**
 * Returns the items for this plugin that should appear on the main menu
 *
@@ -65,15 +57,14 @@ require_once $_CONF['path'] . 'plugins/testimonials/testimonials.php';
 */
 function plugin_getmenuitems_testimonials()
 {
-    global $_CONF;
+    global $_CONF, $_TABLES;
 
     $menulabel = "Testimonials";
     $menurul = $_CONF['site_url'] . "/testimonials/index.php";
 
     $menuitems = array();
-	if (SEC_hasRights('testimonials.view')) {
-    	$menuitems["$menulabel"] = $menurul;
-    }
+  	$menuitems["$menulabel"] = $menurul;
+
     return $menuitems;
 
 }
@@ -107,7 +98,11 @@ function plugin_cclabel_testimonials()
 {
     global $_CONF;
 
-    return array('Testimonials',$_CONF['site_admin_url'] . '/plugins/testimonials/index.php',$_CONF['site_url'] . '/testimonials/images/testimonials.gif');
+    return array(
+        'Testimonials',
+        $_CONF['site_admin_url'] . '/plugins/testimonials/index.php',
+        $_CONF['site_url'] . '/testimonials/images/testimonials.png'
+    );
 }
 
 /**
@@ -125,8 +120,221 @@ function plugin_getadminoption_testimonials()
     global $_CONF, $_TABLES;
 
     if (SEC_hasRights('testimonials.admin')) {
-        return array('Testimonials', $_CONF['site_admin_url'] . '/plugins/testimonials/index.php', DB_count($_TABLES['testimonials']));
+        return array(
+            'Testimonials',
+            $_CONF['site_admin_url'] . '/plugins/testimonials/index.php',
+            DB_count($_TABLES['testimonials'],'queued',0)
+        );
     }
+}
+
+/**
+* Counts the items that are submitted
+*
+* @return   int     number of items in submission queue
+*
+*/
+function plugin_submissioncount_testimonials()
+{
+    global $_TABLES;
+
+    $retval = 0;
+
+    $retval = DB_count ($_TABLES['testimonials'],'queued',1);
+
+    return $retval;
+}
+
+
+/**
+* returns list of moderation values
+*
+* The array returned contains (in order): the row 'id' label, main plugin
+* table, moderation fields (comma seperated), and plugin submission table
+*
+* @return       array        Returns array of useful moderation values
+*
+*/
+function plugin_moderationvalues_testimonials()
+{
+    global $_TABLES;
+
+    return array (
+        'testid',
+        $_TABLES['testimonials'],
+        "testid,queued",
+        ''
+    );
+}
+
+/**
+* Performs plugin exclusive work for items approved by moderation
+*
+* While moderation.php handles the actual move from mediagallery submission
+* to mediagallery tables, within the function we handle all other approval
+* relate tasks
+*
+* @param      string       $id      Identifying string
+* @return     string       Any wanted HTML output
+*
+*/
+function plugin_moderationapprove_testimonials($id)
+{
+    global $_CONF, $_TABLES;
+
+    if ( (int) $id <= 0 ) return '';
+
+    $sql = "UPDATE {$_TABLES['testimonials']} SET queued=0 WHERE testid=".(int) $id;
+    DB_query($sql);
+//@TODO translation
+    COM_setMsg('Testimonial Submission has been approved','warning');
+    return '';
+}
+
+/**
+* Performs plugin exclusive work for items deleted by moderation
+*
+* While moderation.php handles the actual removal from mediagallery submission
+* table, within this function we handle all other deletion
+* relate tasks
+*
+* @param      string       $id      Identifying string
+* @return     string       Any wanted HTML output
+*
+*/
+function plugin_moderationdelete_testimonials($id)
+{
+    global $_CONF, $_TABLES;
+
+    if ( (int) $id <= 0 ) return '';
+
+    $sql = "DELETE FROM {$_TABLES['testimonials']} WHERE testid=".(int) $id . " AND queued=1";
+    DB_query($sql);
+    return;
+}
+
+
+/**
+* show files for moderation on submissions page
+*
+* Uses the Plugin class to return data required by moderation.php to list
+* plugin objects that need to be moderated.
+*
+* @param        string token The
+* @return       Plugin       return HTML
+*
+*/
+function plugin_itemlist_testimonials($token)
+{
+    global $_CONF, $_TABLES, $_USER, $_MG_CONF, $LANG_MG00, $LANG_MG01, $LANG_MG02,$LANG_MG10;
+    global $LANG01, $LANG24, $LANG29, $LANG_ADMIN, $_IMAGE_TYPE;
+
+    $retval = '';
+    $key='media_id';
+
+    if ( COM_isAnonUser() ) {
+        $uid = 1;
+    } else {
+        $uid = $_USER['uid'];
+    }
+
+    $sql = "SELECT * FROM {$_TABLES['testimonials']} WHERE queued = 1";
+
+    $result = DB_query($sql);
+    $nrows = DB_numRows($result);
+
+    if ( $nrows == 0 ) return;
+
+    $data_arr = array();
+    for ($i = 0; $i < $nrows; $i++) {
+        $A = DB_fetchArray($result);
+        $A['edit'] = 'edit';
+        $A['_type_']  = 'testimonials';
+        $A['_key_']   = 'testid';      // name of key/id field
+        $data_arr[$i] = $A;     // push row data into array
+    }
+
+//@TODO translation
+    $header_arr = array(      // display 'text' and use table field 'field'
+        array('text' => $LANG_ADMIN['edit'], 'field' => 'testid', 'align' => 'center', 'width' => '25px'),
+        array('text' => 'Client Name', 'field' => 'clientname'),
+        array('text' => 'Company', 'field' => 'company'),
+        array('text' => 'Date', 'field' => 'tst_date', 'align' => 'center', 'width' => '15%'),
+        array('text' => 'Testimonial','field'=>'text_full'),
+    );
+
+    $text_arr = array('has_menu'    => false,
+                      'title'       => 'Testimonial Submissions',
+                      'help_url'    => '',
+                      'no_data'     => 'No submissions',
+                      'form_url'    => "{$_CONF['site_admin_url']}/moderation.php"
+    );
+
+    $actions = '<input name="approve" type="image" src="'
+        . $_CONF['layout_url'] . '/images/admin/accept.' . $_IMAGE_TYPE
+        . '" style="vertical-align:bottom;" title="' . $LANG29[44]
+        . '" onclick="return confirm(\'' . $LANG29[45] . '\');"'
+        . '/>&nbsp;' . $LANG29[1];
+    $actions .= '&nbsp;&nbsp;&nbsp;&nbsp;';
+    $actions .= '<input name="delbutton" type="image" src="'
+        . $_CONF['layout_url'] . '/images/admin/delete.' . $_IMAGE_TYPE
+        . '" style="vertical-align:text-bottom;" title="' . $LANG01[124]
+        . '" onclick="return confirm(\'' . $LANG01[125] . '\');"'
+        . '/>&nbsp;' . $LANG_ADMIN['delete'];
+
+    $options = array('chkselect' => true,
+                     'chkfield' => 'testid',
+                     'chkname' => 'selitem',
+                     'chkminimum' => 0,
+                     'chkall' => true,
+                     'chkactions' => $actions,
+                     );
+
+    $form_arr['bottom'] = '<input type="hidden" name="type" value="testimonials"/>' . LB
+            . '<input type="hidden" name="' . CSRF_TOKEN . '" value="' . $token . '"/>' . LB
+            . '<input type="hidden" name="moderation" value="x"/>' . LB
+            . '<input type="hidden" name="count" value="' . $nrows . '"/>';
+
+    $retval .= ADMIN_simpleList('_tstm_getListField', $header_arr,
+                              $text_arr, $data_arr, $options, $form_arr, $token);
+    return $retval;
+}
+
+function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
+{
+    global $_CONF;
+
+    $retval = '';
+
+    switch ( $fieldname ) {
+        case 'testid' :
+            $url = $_CONF['site_admin_url'].'/plugins/testimonials/index.php?edit=x&src=mod&testid='.$A['testid'];
+            $retval = '<a href="'.$url.'"><i class="uk-icon uk-icon-pencil"></i></a>';
+
+            break;
+        case 'text_full' :
+//@TODO translation
+            $retval = '
+
+            <button type="button" class="uk-button uk-button-success" data-uk-modal="{target:\'#tstid'.$A['testid'].'\'}">Testimonial</button>
+            <div id="tstid'.$A['testid'].'" class="uk-modal">
+                <div class="uk-modal-dialog">
+                    <a class="uk-modal-close uk-close"></a>
+                    <h3>Summary</h3>
+                    '.nl2br($A['text_short']).'
+                    <h3>Full Review</h3>
+                    '.nl2br($A['text_full']).'
+                </div>
+            </div>
+            ';
+            break;
+
+        default :
+            $retval = $fieldvalue;
+            break;
+    }
+
+    return $retval;
 }
 
 /**
@@ -141,10 +349,11 @@ function phpblock_testimonials()
 
     $retval = '';
 
+    $randomSelect = "RAND(NOW()) ";
+
     $sql = "SELECT testid,clientname,company,homepage,text_short
 					FROM {$_TABLES['testimonials']}
-					order by views ASC, tst_date
-					LIMIT 1";
+					ORDER BY RAND(NOW()) LIMIT 1";
 
     $result = DB_query($sql);
     if (DB_numRows($result) == 1 ) {
@@ -157,78 +366,4 @@ function phpblock_testimonials()
 	}
     return $retval;
 }
-
-/**
-* Removes the datastructures for this plugin from the glFusion database.
-* This routine will get called from the Plugin install program if user select De-Install or if Delete is used in the Plugin Editor.
-* The Plugin Installer will also call this routine upon and install error to remove anything it has created.
-* The Plugin installer will pass the optional parameter which will then double check that plugin has first been disabled.
-*
-* For this plugin, this routine will also remove the Block definition.
-*
-* Returns True if all Plugin related data is removed without error
-*
-* @param    string   $installCheck     Defult is blank but if set, check if plugin is disabled first
-*
-* @return   boolean True if successful false otherwise
-*
-*/
-function plugin_uninstall_testimonials($installCheck='')
-{
-    global $_TABLES, $LANG_TSTM01;
-
-    // The testimonials need to be changed to the name of your plugin
-    //
-    $pi_name='testimonials';
-    $FEATURES = array ( 'testimonials.admin', 'testimonials.view');
-    $TABLES = array ('testimonials');
-
-    // Check and see if plugin is still enabled - if so display warning and exit
-    if ($installCheck != '' && DB_getItem($_TABLES['plugins'],'pi_enabled', 'pi_name = "' .$pi_name. '"')) {
-	    COM_errorLog("Plugin is installed and enabled. Disable first if you want to de-install it",1);
-		$display .= COM_startBlock($LANG_TSTM01['warning']);
-		$display .= $LANG_TSTM01['enabled'];
-		$display .= COM_endBlock();
-		echo $display;
-		return false;
-		exit;
-	}
-
-	// Ok to proceed and delete plugin
-
-    // Unregister the plugin with glFusion
-    COM_errorLog('Attempting to unregister the testimonials plugin from glFusion',1);
-    DB_query("DELETE FROM {$_TABLES['plugins']} WHERE pi_name = 'testimonials'",1);
-
-    // Drop testimonials tables
-    foreach($TABLES as $table) {
-        $t = $_TABLES["$table"];
-        COM_errorLog("Removing Table $t",1);
-        DB_query("DROP TABLE $t",1);
-    }
-
-    // Remove Security for this plugin
-    $grp_id = DB_getItem($_TABLES['vars'], 'value', "name = '{$pi_name}_gid'");
-
-    COM_errorLog("Removing $pi_name Admin Group", 1);
-    DB_query("DELETE FROM {$_TABLES['groups']} WHERE grp_id = $grp_id",1);
-    DB_query("DELETE FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'");
-    COM_errorLog("Removing root users from admin of $pi_name");
-    DB_query("DELETE FROM {$_TABLES['group_assignments']} WHERE ug_main_grp_id = $grp_id",1);
-
-	// remove from blocks
-	DB_query("DELETE FROM {$_TABLES['blocks']} WHERE name = 'testimonials'");
-
-    // Remove all the associated features -- access rights
-    foreach ($FEATURES as $feature) {
-        COM_errorLog("Removing $feature feature and rights to it",1);
-        $feat_id = DB_getItem($_TABLES['features'], 'ft_id', "ft_name = '$feature'");
-        DB_query("DELETE FROM {$_TABLES['access']} WHERE acc_ft_id = $feat_id",1);
-        DB_query("DELETE FROM {$_TABLES['features']} WHERE ft_id = $feat_id",1);
-    }
-
-    COM_errorLog('...success',1);
-    return true;
-}
-
 ?>
