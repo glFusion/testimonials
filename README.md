@@ -27,7 +27,25 @@ The upgrade process is identical to the installation process, simply upload the 
 
 ### CONFIGURATION
 
-There are no configuration options for this plugin.
+**Display Blocks**
+
+Which glFusion blocks to display when viewing Testimonials. For example, left, right, none, both...
+
+**Allow Anonymous Users to Submit Testimonials**
+
+If this is set to True, anonymous (non-logged-in users) will be able to submit testimonials. See Moderation Queue Below.
+
+**User Moderation Queue for User Submitted Testimonials**
+
+If set to TRUE (Recommended Settings), user submitted testimonials will be placed in a moderation queue for review and approval. Testimonials will not be available for public view until they have been approved by a Testimonials Administrator.
+
+**Time User must wait between testimonial submissions**
+
+The amount of time (in seconds) that a user must wait before submitting a new testimonial. Generally this value should be very high as most users do not submit more than one testimonial.
+
+**Number of Testimonials Per Page**
+
+The number of testimonials to display per page.
 
 ### LICENSE
 
@@ -36,4 +54,4 @@ the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
 
-This plugins was originally developed by Jodi Diehl - scripts AT sunfrogservices DOTcom
+This plugin was originally developed by Jodi Diehl - scripts AT sunfrogservices DOT com
