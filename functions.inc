@@ -351,6 +351,244 @@ function plugin_getconfigelementhelp_testimonials($option, $doclang='english')
     return array($doc_url, 0);
 }
 
+function plugin_searchtypes_testimonials()
+{
+    global $_CONF, $_TST_CONF, $_USER, $LANG_TSTM01;
+
+    $tmp['testimonials'] = $LANG_TSTM01['plugin_name'];
+
+    return $tmp;
+}
+
+
+/**
+* this searches for testimonials matching the user query and returns an array of
+* for the header and table rows back to search.php where it will be formated and
+* printed
+*
+* @query            string          Keywords user is looking for
+* @datestart        date/time       Start date to get results for
+* @dateend          date/time       End date to get results for
+* @topic            string          The topic they were searching in
+* @type             string          Type of items they are searching
+* @author           string          Get all results by this author
+*
+*/
+function plugin_dopluginsearch_testimonials($query, $datestart, $dateend, $topic, $type, $author, $keyType, $page, $perpage)
+{
+    global $_USER, $_TST_CONF, $LANG_TSTM01, $_TABLES, $_CONF;
+
+    $query = trim(DB_escapeString(htmlspecialchars($query)));
+
+    $sql = " SELECT testid AS id, text_short AS description,text_full,UNIX_TIMESTAMP(tst_date) AS date, views AS hits, CONCAT(clientname,' ',company) AS title, CONCAT('/testimonials/index.php?id=',testid) AS url ";
+    $sql .= "FROM {$_TABLES['testimonials']} ";
+    $sql .= "WHERE queued = 0 ";
+
+    $search = new SearchCriteria('testimonials', 'Testimonials');
+    $columns = array('text_short','text_full');
+    $sql .= $search->getDateRangeSQL('AND', '(UNIX_TIMESTAMP(tst_date))', $datestart, $dateend);
+    list($sql,$ftsql) = $search->buildSearchSQL($keyType, $query, $columns, $sql);
+    $search->setSQL($sql);
+    $search->setFTSQL($ftsql);
+    $search->setRank(3);
+
+    return $search;
+}
+
+
+/**
+* Return information for a testimonial
+*
+* @param    string  $id         file ID or '*'
+* @param    string  $what       comma-separated list of properties
+* @param    int     $uid        user ID or 0 = current user
+* @param    array   $options    (reserved for future extensions)
+* @return   mixed               string or array of strings with the information
+*
+*/
+function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array())
+{
+    global $_CONF, $_TST_CONF, $_TABLES, $LANG_TSTM01;
+
+    $properties = explode(',', $what);
+    $fields = array();
+    foreach ($properties as $p) {
+        switch ($p) {
+            case 'date' :
+            case 'date-modified':
+            case 'date-created' :
+                $fields[] = 'UNIX_TIMESTAMP(tst_date) AS unixdate';
+                break;
+            case 'description':
+                $fields[] = 'text_full';
+                break;
+            case 'excerpt':
+                $fields[] = 'text_short';
+                break;
+            case 'searchidx' :
+                $fields[] = 'text_short';
+                $fields[] = 'text_full';
+                $fields[] = "company";
+                $fields[] = "clientname";
+                break;
+            case 'raw-description' :
+                $fields[] = 'text_full';
+                break;
+            case 'id':
+                $fields[] = 'testid';
+                break;
+            case 'title':
+                $fields[] = 'clientname';
+                $fields[] = 'company';
+                break;
+            case 'label':
+            case 'url':
+            case 'status' :
+                $fields[] = 'testid';
+                $fields[] = 'queued';
+                break;
+            case 'author' :
+            case 'author_name' :
+                $fields[] = 'clientname';
+                break;
+            case 'hits' :
+                $fields[] = 'views';
+                break;
+            case 'perms' :
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    $fields = array_unique($fields);
+
+    if (count($fields) == 0) {
+        $retval = array();
+
+        return $retval;
+    }
+
+    if ($id == '*') {
+        $where = '';
+        $permOp = 'WHERE queued=0 ';
+    } else {
+        $where = " WHERE testid = '" . DB_escapeString($id) . "' ";
+        $permOp = 'AND';
+    }
+
+    $sql = "SELECT " . implode(',', $fields)
+            . " FROM {$_TABLES['testimonials']} "
+            . " " . $where;
+    if ($id != '*') {
+        $sql .= ' LIMIT 1';
+    }
+
+    $result = DB_query($sql);
+    $numRows = DB_numRows($result);
+
+    $retval = array();
+    for ($i = 0; $i < $numRows; $i++) {
+        $A = DB_fetchArray($result);
+
+        $props = array();
+        foreach ($properties as $p) {
+            switch ($p) {
+                case 'date' :
+                case 'date-created' :
+                case 'date-modified':
+                    $props[$p] = $A['unixdate'];
+                    break;
+                case 'description':
+                    $props[$p] = nl2br($A['text_full']);
+                    break;
+                case 'excerpt':
+                    $props[$p] = nl2br($A['text_short']);
+                    break;
+                case 'searchidx' :
+                    $props[$p] = $A['text_short'].' '.$A['text_full'].' '.$A['company'].' '.$A['clientname'];
+                    break;
+                case 'raw-description':
+                    $props[$p] = $A['text_full'];
+                    break;
+                case 'id':
+                    $props['id'] = $A['testid'];
+                    break;
+                case 'title':
+                    $props['title'] = $A['clientname'];
+                    if ( $A['company'] != "" ) {
+                        $props['title'] .= ' - ' . $A['company'];
+                    }
+                    break;
+                case 'url':
+                    if (empty($A['testid'])) {
+                        $props['url'] = COM_buildUrl($_CONF['site_url'].'/testimonials/index.php?id=' . $id);
+                    } else {
+                        $props['url'] = COM_buildUrl($_CONF['site_url'].'/testimonials/index.php?id=' . $A['testid']);
+                    }
+                    break;
+                case 'label':
+                    $props['label'] = $LANG_TSTM01['plugin_name'];
+                    break;
+                case 'status':
+                    $props['status'] = $A['queued'];
+                    break;
+                case 'author' :
+                    $props['author'] = $A['clientname'];
+                    break;
+                case 'author_name' :
+                    $props['author_name'] = $A['clientname'];
+                    break;
+                case 'hits' :
+                    $props['hits'] = $A['views'];
+                    break;
+                case 'perms' :
+                    $p_anon = 0;
+                    $p_member = 0;
+                    $props['perms'] = array(
+                        'owner_id' => 2,
+                        'group_id' => 3,
+                        'perm_owner' => 3,
+                        'perm_group' => 2,
+                        'perm_members' => 2,
+                        'perm_anon' => 2,
+                    );
+                    break;
+                default:
+                    $props[$p] = '';
+                    break;
+            }
+        }
+
+        $mapped = array();
+
+        foreach ($props as $key => $value) {
+            if ($id == '*') {
+                if ($value != '') {
+                    $mapped[$key] = $value;
+                }
+            } else {
+                $mapped[$key] = $value;
+            }
+        }
+
+        if ($id == '*') {
+            $retval[] = $mapped;
+        } else {
+            $retval = $mapped;
+            break;
+        }
+    }
+
+    if (($id != '*') && (count($retval) == 1)) {
+        $tRet = array_values($retval);
+        $retval = $tRet[0];
+    }
+
+    return $retval;
+}
+
 
 function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
 {
