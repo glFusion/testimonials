@@ -134,6 +134,11 @@ function saveSubmission()
            .");";
     $result = DB_query($sql);
 
+    if ( $_TST_CONF['queue_submissions'] != true) {
+        $testid = DB_insertId($result);
+        PLG_itemSaved($testid,'testimonials');
+    }
+
     COM_updateSpeedlimit ('testimonials');
 
     CACHE_remove_instance('menu');

@@ -141,6 +141,7 @@ function delEntry()
             $delete_id = (int) COM_applyFilter($id,true);
             if ( $delete_id > 0 )
                 DB_query ("DELETE FROM {$_TABLES['testimonials']} where testid = " . (int) $delete_id );
+                PLG_itemDeleted($delete_id,'testimonials');
         }
     }
     return;
@@ -181,6 +182,7 @@ function saveEntry()
                ."'".$filter->prepareForDB($tst_date)."'"
                .");";
         $result = DB_query($sql);
+        $testid = DB_insertId($result);
     } else {
         $sql = "UPDATE {$_TABLES['testimonials']} SET "
                ."text_short='". $filter->prepareForDB($text_short)."',"
@@ -192,6 +194,7 @@ function saveEntry()
                ." WHERE testid=".(int) $testid;
         $result = DB_query($sql);
     }
+    PLG_itemSaved($testid,'testimonials');
     COM_setMsg( $LANG_TSTM01['saved_success'], 'warning' );
     CACHE_remove_instance('menu');
     $src = 'adm';

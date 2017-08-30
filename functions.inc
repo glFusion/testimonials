@@ -198,6 +198,9 @@ function plugin_moderationapprove_testimonials($id)
 
     $sql = "UPDATE {$_TABLES['testimonials']} SET queued=0 WHERE testid=".(int) $id;
     DB_query($sql);
+
+    PLG_itemSaved($id,'testimonials');
+
     CACHE_remove_instance('menu');
     COM_setMsg($LANG_TSTM01['submission_approved'],'warning');
     return '';
@@ -222,6 +225,7 @@ function plugin_moderationdelete_testimonials($id)
 
     $sql = "DELETE FROM {$_TABLES['testimonials']} WHERE testid=".(int) $id . " AND queued=1";
     DB_query($sql);
+    PLG_itemDeleted($id, 'testimonials');
     CACHE_remove_instance('menu');
     return;
 }
