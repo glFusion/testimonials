@@ -56,7 +56,7 @@ function plugin_initconfig_testimonials()
         $c->add('fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true,'testimonials');
 
         $c->add('displayblocks', $_TST_DEFAULTS['displayblocks'],'select', 0, 0, 1, 5, true, 'testimonials');
-        $c->add('anonymous_submit', $_TST_DEFAULTS['anonymous_submit'],'select', 0, 0, 3, 10, true, 'testimonials');
+        $c->add('anonymous_submit', $_TST_DEFAULTS['anonymous_submit'],'select', 0, 0, 2, 10, true, 'testimonials');
         $c->add('queue_submissions', $_TST_DEFAULTS['queue_submissions'],'select', 0, 0, 0, 15, true, 'testimonials');
         $c->add('speedlimit', $_TST_DEFAULTS['speedlimit'],'text', 0, 0, NULL, 20, true, 'testimonials');
         $c->add('per_page', $_TST_DEFAULTS['per_page'],'text', 0, 0, NULL, 25, true, 'testimonials');
