@@ -5,10 +5,12 @@ For the latest, and more detailed, documentation, please see the [Testimonials P
 ### OVERVIEW
 
 This is a plugin for glFusion that will allow you to showcase your testimonials.
-There are two fields for the testimonial text: one for a 25-30 word summary
-that will be displayed in a block, one for full text that will be displayed
-on the testimonials page. You may also include the client name, company and
-URL. The date field is used for your own reference - it is not published.
+Site administrators can manually enter testimonials received via email or other
+methods. Users can also submit testimonials that optionally can be queued for 
+review prior to publishing.
+
+A Testimonial Block is included that will pull random testimonials to display
+on your site.
 
 ### SYSTEM REQUIREMENTS
 
