@@ -41,9 +41,19 @@ function TST_truncate($string, $length, $trimmarker = '') {
 * Main Function
 */
 
+$query  = '';
+$tid    = 0;
+$page   = 1;
+
+COM_setArgNames( array('id') );
+$tid = (int) COM_applyFilter(COM_getArgument( 'id' ),true);
+
+if (isset ($_GET['query'])) {
+    $query = trim(COM_applyFilter ($_GET['query']));
+}
+
 $limit = $_TST_CONF['per_page'];
 
-$page = 1;
 if (isset ($_GET['page'])) {
     $page = (int) COM_applyFilter ($_GET['page'], true);
     if ($page == 0) {
@@ -52,7 +62,12 @@ if (isset ($_GET['page'])) {
 }
 $offset = intval(($page - 1) * $limit);
 
-$data = DB_query ("SELECT COUNT(*) AS count FROM {$_TABLES['testimonials']} WHERE queued=0");
+$where = '';
+if ( $tid != 0 ) {
+    $where = " AND testid=".(int) $tid. " ";
+}
+
+$data = DB_query ("SELECT COUNT(*) AS count FROM {$_TABLES['testimonials']} WHERE queued=0" . $where);
 $D = DB_fetchArray ($data);
 $num_pages = ceil ($D['count'] / $limit);
 
@@ -65,7 +80,9 @@ $T->set_file (array (
 $T->set_var ('header', $LANG_TSTM01['header']);
 
 $sql = "SELECT testid,clientname,company,text_full,text_short,homepage "
-       ."FROM {$_TABLES['testimonials']} WHERE queued=0 ORDER BY tst_date DESC "
+       ."FROM {$_TABLES['testimonials']} WHERE queued=0 "
+       . $where
+       ."ORDER BY tst_date, testid DESC "
        ."LIMIT ".$offset.",".$limit;
 
 $result = DB_query ($sql);
@@ -89,6 +106,7 @@ if ( !COM_isAnonUser() || $_TST_CONF['anonymous_submit'] == true ) {
     $T->set_var('lang_submit_testimonial',$LANG_TSTM01['submit_testimonial']);
 }
 
+
 $T->set_block('page','testimonials','tm');
 
 for ($i = 0; $i < $num; $i++) {
@@ -101,13 +119,13 @@ for ($i = 0; $i < $num; $i++) {
 
     $T->set_var(array(
         'testid'            => $A['testid'],
-        'client'            => $A['clientname'],
-        'text_full'         => nl2br(trim($A['text_full'])),
-        'text_truncated'    => nl2br($truncated),
-        'company_name'      => $A['company'],
+        'client'            => COM_highlightQuery($A['clientname'],$query),
+        'text_full'         => COM_highlightQuery(nl2br(trim($A['text_full'])),$query),
+        'text_truncated'    => COM_highlightQuery(nl2br($truncated),$query),
+        'company_name'      => COM_highlightQuery($A['company'],$query),
     ));
     if ( utf8_strlen($A['text_full']) > 300) {
-        $T->set_var('text_remaining',nl2br($remaining));
+        $T->set_var('text_remaining',COM_highlightQuery(nl2br($remaining),$query));
     } else {
         $T->unset_var('text_remaining');
     }
