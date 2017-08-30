@@ -18,7 +18,7 @@
   <div class="uk-form-row">
     <label class="uk-form-label">{testdate_text}</label>
     <div class="uk-form-controls">
-      <input type="text" name="tstdate" size="30" value="{row_tstdate}">
+			<input type="text" name="tstdate" value="{row_tstdate}" data-uk-datepicker="{format:'YYYY-MM-DD'}">
       <span class="uk-form-help-inline">{date_help}</span>
     </div>
   </div>
