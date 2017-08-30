@@ -20,10 +20,19 @@ require_once '../lib-common.php';
 
 function submitEntry( $A = array() )
 {
-    global $_CONF, $_TABLES, $LANG_TSTM01;
+    global $_CONF, $_TST_CONF, $_TABLES, $LANG_TSTM01;
 
     $retval = '';
     $display = '';
+
+    COM_clearSpeedlimit ($_TST_CONF['speedlimit'], 'testimonials');
+    $last = 0;
+    $last = COM_checkSpeedlimit ('testimonials');
+    if ($last > 0) {
+        COM_setMsg('You must wait ' . (int) ($_TST_CONF['speedlimit'] / 60) . ' minutes between testimonial submissions.','error' );
+        COM_refresh($_CONF['site_url'].'/testimonials/index.php');
+    }
+
 
     $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
     $T->set_file ('form','submit_entry.thtml');
@@ -125,6 +134,8 @@ function saveSubmission()
            .");";
     $result = DB_query($sql);
 
+    COM_updateSpeedlimit ('testimonials');
+
     CACHE_remove_instance('menu');
 
     COM_setMsg( 'Testimonial Successfully Submitted.', 'warning' );
@@ -132,31 +143,36 @@ function saveSubmission()
     COM_refresh($_CONF['site_url'].'/testimonials/index.php');
 }
 
-$cmd = 'add';
-$expectedActions = array('add','save');
-foreach ( $expectedActions AS $action ) {
-    if ( isset($_POST[$action])) {
-        $cmd = $action;
-    } elseif ( isset($_GET[$action])) {
-        $cmd = $action;
+if ( COM_isAnonUser() && $_TST_CONF['anonymous_submit'] == false ) {
+    $page = SEC_loginRequiredForm();
+} else {
+    $cmd = 'add';
+    $expectedActions = array('add','save');
+    foreach ( $expectedActions AS $action ) {
+        if ( isset($_POST[$action])) {
+            $cmd = $action;
+        } elseif ( isset($_GET[$action])) {
+            $cmd = $action;
+        }
+    }
+    if ( isset($_POST['cancel'])) COM_refresh($_CONF['site_url'].'/testimonials/index.php');
+
+    switch ( $cmd ) {
+        case 'add' :
+            $page = submitEntry();
+            break;
+        case 'save' :
+            if (SEC_checkToken()) {
+                $page = saveSubmission();
+            }
+
+
+        default :
+            COM_refresh($_CONF['site_url'].'/testimonials/index.php');
+            break;
     }
 }
-if ( isset($_POST['cancel'])) COM_refresh($_CONF['site_url'].'/testimonials/index.php');
-
-switch ( $cmd ) {
-    case 'add' :
-        $page = submitEntry();
-        break;
-    case 'save' :
-        $page = saveSubmission();
-        break;
-
-    default :
-        COM_refresh($_CONF['site_url'].'/testimonials/index.php');
-        break;
-}
-
-$display = COM_siteHeader('menu');
+$display = COM_siteHeader($_TST_CONF['menu'],$LANG_TSTM01['plugin_name']);
 $display .= $page;
 $display .= COM_siteFooter();
 echo $display;
