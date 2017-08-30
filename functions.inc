@@ -22,6 +22,9 @@ if (!defined ('GVERSION')) {
     die ('This file can not be used on its own.');
 }
 
+$tst_config = \config::get_instance();
+$_TST_CONF = $tst_config->get_config('testimonials');
+
 /**
 * Language file Include
 */
@@ -38,10 +41,19 @@ if (file_exists ($langfile)) {
 */
 require_once $_CONF['path'] . 'plugins/testimonials/testimonials.php';
 
-// temporary configuration settings
-$_TST_CONF['show_blocks'] = 0;
-$_TST_CONF['anonymous_submit'] = 1;
-$_TST_CONF['queue_submissions'] = 1;
+switch( $_TST_CONF['displayblocks'] ) {
+    case 0 : // left only
+    case 2 :
+        $_TST_CONF['menu'] = 'menu';
+        break;
+    case 1 : // right only
+    case 3 :
+        $_TST_CONF['menu'] = 'none';
+        break;
+    default :
+        $_TST_CONF['menu'] = 'menu';
+        break;
+}
 
 
 /**
@@ -314,6 +326,32 @@ function plugin_getheadercss_testimonials()
 }
 
 
+/**
+*   Get the URL to the configuration help file.
+*
+*   @param  string  $option     Config option selected
+*   @param  string  $doclang    Document language
+*   @return string              URL to document
+*/
+function plugin_getconfigelementhelp_testimonials($option, $doclang='english')
+{
+    global $_CONF, $_TST_CONF;
+
+    $file = 'config.html';
+
+    $doc_url = $_CONF['site_url'] . '/testimonials/docs/'.$doclang.'/config.html';
+
+     if (empty($doc_url))
+        return false;
+
+    if (!empty($option)) {
+        $doc_url .= '#desc_' . $option;
+    }
+
+    return array($doc_url, 0);
+}
+
+
 function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
 {
     global $_CONF, $LANG_TSTM01;
@@ -348,6 +386,17 @@ function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
     }
 
     return $retval;
+}
+
+/**
+*   Get the currently installed version.
+*
+*   @return string  version number
+*/
+function plugin_chkVersion_testimonials()
+{
+    global $_TST_CONF;
+    return $_TST_CONF['pi_version'];
 }
 
 /**

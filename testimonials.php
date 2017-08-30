@@ -26,7 +26,7 @@ global $_DB_table_prefix, $_TABLES;
 
 $_TST_CONF['pi_name']            = 'testimonials';
 $_TST_CONF['pi_display_name']    = 'Testimonials';
-$_TST_CONF['pi_version']         = '0.1.0';
+$_TST_CONF['pi_version']         = '0.2.0';
 $_TST_CONF['gl_version']         = '1.6.0';
 $_TST_CONF['pi_url']             = 'https://www.glfusion.org/';
 

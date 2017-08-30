@@ -76,4 +76,30 @@ $LANG_TSTM01 = array (
     'admin_help'        => 'Admin screen help text for testimonial plugin',
 );
 
+$LANG_configsections['testimonials'] = array(
+    'label' => 'Testimonials',
+    'title' => 'Testimonials Plugin Configuration',
+);
+
+$LANG_confignames['testimonials'] = array(
+    'displayblocks'         => 'Display Blocks',
+    'anonymous_submit'      => 'Allow Anonymous Users to Submit Testimonials',
+    'queue_submissions'     => 'Use Moderation Queue for User Submitted Testimonials',
+    'speedlimit'            => 'Time user must wait between testimonial submissions (seconds)',
+    'per_page'              => 'Number of Testimonails per page',
+);
+
+$LANG_configsubgroups['Testimonials'] = array(
+    'sg_main' => 'Main Settings',
+);
+
+$LANG_fs['testimonials'] = array(
+    'fs_main' => 'Main Settings',
+);
+
+$LANG_configselects['testimonials'] = array(
+    0  => array('True' => 1, 'False' => 0 ),
+    1  => array('Left Blocks' => 0, 'Right Blocks' => 1, 'All Blocks' => 2, 'No Blocks' => 3),
+);
+
 ?>

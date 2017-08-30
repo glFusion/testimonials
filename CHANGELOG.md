@@ -1,4 +1,8 @@
 Testimonials Plugin ChangeLog
 
-## v0.1.0
+## v1.0.0
+  - Configuration options
+  - Added pagination to testimonals list view
+  - Added speedlimit checking
+  - Added moderation queue support
   - Ported / Updated to glFusion CMS standards.

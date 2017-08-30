@@ -83,6 +83,17 @@ function plugin_install_testimonials()
     return true;
 }
 
+/**
+*   Loads the configuration records for the Online Config Manager.
+*
+*   @return boolean     True = proceed, False = an error occured
+*/
+function plugin_load_configuration_testimonials()
+{
+    require_once dirname(__FILE__) . '/install_defaults.php';
+    return plugin_initconfig_testimonials();
+}
+
 
 /**
 * Automatic uninstall function for plugins
