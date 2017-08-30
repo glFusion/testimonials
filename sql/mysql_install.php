@@ -29,7 +29,7 @@ $_SQL['testimonials'] = "CREATE TABLE {$_TABLES['testimonials']} (
     clientname text,
     company text,
     homepage text,
-    tst_date date default NULL,
+    tst_date date DEFAULT CURRENT_TIMESTAMP,
     views int(25) NOT NULL default '0',
     queued tinyint(3) NOT NULL default '0',
     owner_id mediumint(8) unsigned NOT NULL default '1',
