@@ -21,7 +21,6 @@ require_once '../../auth.inc.php';
 
 // Only let admin users access this page
 if (!SEC_hasRights('testimonials.admin')) {
-    // Someone is trying to illegally access this page
     COM_errorLog("Someone has tried to access the testimonials Admin page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
     $display = COM_siteHeader();
     $display .= COM_startBlock($LANG_TSTM01['access_denied']);
@@ -47,6 +46,7 @@ function listEntries()
             array('text' => $LANG_TSTM01['client'], 'field' => 'clientname', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['company'], 'field' => 'company', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['tstdate'], 'field' => 'tst_date', 'sort' => true, 'align' => 'left'),
+            array('text' => $LANG_TSTM01['testimonial'], 'field' => 'text_short', 'sort' => false, 'align' => 'center'),
             array('text' => $LANG_TSTM01['edit'],   'field' => 'testid', 'sort' => false, 'align' => 'center'),
     );
     $defsort_arr = array('field'     => 'tst_date',
@@ -57,10 +57,10 @@ function listEntries()
             'has_search'    => true,
             'has_limit'     => true,
             'has_paging'    => true,
-            'no_data'       => 'No testimonials have been submitted',
+            'no_data'       => $LANG_TSTM01['no_testimonials'],
     );
 
-    $sql = "SELECT testid AS id1,testid,clientname,company,tst_date,text_short,views "
+    $sql = "SELECT testid AS id1,testid,clientname,company,tst_date,text_short,text_full,views "
             . "FROM {$_TABLES['testimonials']} ";
 
     $query_arr = array('table' => 'testimonials',
@@ -111,12 +111,16 @@ function TST_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
 
     switch ($fieldname) {
         case 'company' :
-            $retval = '<a class="'.COM_getToolTipStyle().'" title="' . htmlspecialchars($A['text_short']) . '" >'.$fieldvalue.'</a>';
+            $retval = $fieldvalue;
             break;
 
         case 'testid' :
             $url = $_CONF['site_admin_url'].'/plugins/testimonials/index.php?edit=x&testid='.$A['testid'];
             $retval = '<a href="'.$url.'"><i class="uk-icon uk-icon-pencil"></i></a>';
+            break;
+
+        case 'text_short' :
+            $retval = '<a class="'.COM_getToolTipStyle().'" title="' . htmlspecialchars($A['text_short']) . '<br><br>'.htmlspecialchars($A['text_full']) . '"><i class="uk-icon uk-icon-info-circle"></i></a>';
             break;
 
         default:
@@ -159,11 +163,9 @@ function saveEntry()
 
     $filter = new sanitizer();
 
-    $filter->setPostmode('html');
+    $filter->setPostmode('text');
     $text_full = $filter->filterHTML($filter->censor($tst_full));
     $text_short = $filter->filterHTML($filter->censor($tst_short));
-
-    $filter->setPostmode('text');
     $client_name = $filter->filterText($filter->censor($clientName));
     $company_name = $filter->filterText($filter->censor($company));
 
@@ -190,8 +192,8 @@ function saveEntry()
                ." WHERE testid=".(int) $testid;
         $result = DB_query($sql);
     }
-    COM_setMsg( 'Testimonial Successfully Saved.', 'warning' );
-
+    COM_setMsg( $LANG_TSTM01['saved_success'], 'warning' );
+    CACHE_remove_instance('menu');
     $src = 'adm';
     if ( isset($_POST['src']) ) {
         $src = COM_applyFilter($_POST['src']);
@@ -282,12 +284,12 @@ function tst_admin_menu($action)
         array( 'url' => $_CONF['site_admin_url'], 'text' => $LANG_ADMIN['admin_home'])
     );
 
-    $retval = '<h2>Testimonials</h2>';
+    $retval = '<h2>'.$LANG_TSTM01['plugin_name'].'</h2>';
 
     $retval .= ADMIN_createMenu(
         $menu_arr,
-        'Need some help text here',
-        $_CONF['site_url'] . '/testimonials/images/testimonials.gif'
+        $LANG_TSTM01['admin_help'],
+        $_CONF['site_url'] . '/testimonials/images/testimonials.png'
     );
 
     return $retval;

@@ -19,6 +19,25 @@
 require_once '../lib-common.php';
 
 /*
+	Truncated text to the nearest word based on a character count - substr()
+	http://www.beliefmedia.com/php-truncate-functions
+	preg-match()
+	http://php.net/manual/en/function.preg-match.php
+*/
+function TST_truncate($string, $length, $trimmarker = '') {
+  $strlen = strlen($string);
+  /* mb_substr forces a break at $length if no word (space) boundary */
+  $string = trim(utf8_substr($string, 0, $strlen));
+  if ($strlen > $length) {
+   preg_match('/^.{1,' . ($length - strlen($trimmarker)) . '}\b/su', $string, $match);
+   $string = trim($match['0']) . $trimmarker;
+    } else {
+   $string = trim($string);
+  }
+ return $string;
+}
+
+/*
 * Main Function
 */
 
@@ -35,7 +54,15 @@ $num = DB_numRows ($result);
 
 if ( $num === 0 ) {
     $T->set_var('no_testimonials',true);
+    $T->set_var('lang_no_testimonials',$LANG_TSTM01['no_testimonials']);
 }
+
+$T->set_var(array(
+    'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
+    'lang_submit_testimonial' => $LANG_TSTM01['submit_testimonial'],
+    'lang_more' => $LANG_TSTM01['more'],
+    'lang_less' => $LANG_TSTM01['less'],
+));
 
 $T->set_block('page','testimonials','tm');
 
@@ -44,15 +71,15 @@ for ($i = 0; $i < $num; $i++) {
 
     if ( $A['text_full'] == "" ) $A['text_full'] = $A['text_short'];
 
-    $truncated = COM_truncate($A['text_full'], 300,'');
+    $truncated = TST_truncate($A['text_full'], 500,'');
     $remaining = utf8_substr($A['text_full'],utf8_strlen($truncated));
 
     $T->set_var(array(
-        'testid'    => $A['testid'],
-        'client'    => $A['clientname'],
-        'text_full' => nl2br(trim($A['text_full'])),
-        'text_truncated' => nl2br($truncated),
-         'company_name' => $A['company'],
+        'testid'            => $A['testid'],
+        'client'            => $A['clientname'],
+        'text_full'         => nl2br(trim($A['text_full'])),
+        'text_truncated'    => nl2br($truncated),
+        'company_name'      => $A['company'],
     ));
     if ( utf8_strlen($A['text_full']) > 300) {
         $T->set_var('text_remaining',nl2br($remaining));

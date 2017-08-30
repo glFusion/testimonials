@@ -57,13 +57,13 @@ $_TST_CONF['queue_submissions'] = 1;
 */
 function plugin_getmenuitems_testimonials()
 {
-    global $_CONF, $_TABLES;
+    global $_CONF, $_TABLES, $LANG_TSTM01;
 
-    $menulabel = "Testimonials";
+    $menulabel = $LANG_TSTM01['plugin_name'];
     $menurul = $_CONF['site_url'] . "/testimonials/index.php";
 
     $menuitems = array();
-  	$menuitems["$menulabel"] = $menurul;
+  	$menuitems[$menulabel] = $menurul;
 
     return $menuitems;
 
@@ -96,10 +96,10 @@ function plugin_commentsupport_testimonials()
 */
 function plugin_cclabel_testimonials()
 {
-    global $_CONF;
+    global $_CONF, $LANG_TSTM01;
 
     return array(
-        'Testimonials',
+        $LANG_TSTM01['plugin_name'],
         $_CONF['site_admin_url'] . '/plugins/testimonials/index.php',
         $_CONF['site_url'] . '/testimonials/images/testimonials.png'
     );
@@ -117,11 +117,11 @@ function plugin_cclabel_testimonials()
 */
 function plugin_getadminoption_testimonials()
 {
-    global $_CONF, $_TABLES;
+    global $_CONF, $_TABLES, $LANG_TSTM01;
 
     if (SEC_hasRights('testimonials.admin')) {
         return array(
-            'Testimonials',
+            $LANG_TSTM01['plugin_name'],
             $_CONF['site_admin_url'] . '/plugins/testimonials/index.php',
             DB_count($_TABLES['testimonials'],'queued',0)
         );
@@ -180,14 +180,14 @@ function plugin_moderationvalues_testimonials()
 */
 function plugin_moderationapprove_testimonials($id)
 {
-    global $_CONF, $_TABLES;
+    global $_CONF, $_TABLES, $LANG_TSTM01;
 
     if ( (int) $id <= 0 ) return '';
 
     $sql = "UPDATE {$_TABLES['testimonials']} SET queued=0 WHERE testid=".(int) $id;
     DB_query($sql);
-//@TODO translation
-    COM_setMsg('Testimonial Submission has been approved','warning');
+    CACHE_remove_instance('menu');
+    COM_setMsg($LANG_TSTM01['submission_approved'],'warning');
     return '';
 }
 
@@ -210,6 +210,7 @@ function plugin_moderationdelete_testimonials($id)
 
     $sql = "DELETE FROM {$_TABLES['testimonials']} WHERE testid=".(int) $id . " AND queued=1";
     DB_query($sql);
+    CACHE_remove_instance('menu');
     return;
 }
 
@@ -226,7 +227,7 @@ function plugin_moderationdelete_testimonials($id)
 */
 function plugin_itemlist_testimonials($token)
 {
-    global $_CONF, $_TABLES, $_USER, $_MG_CONF, $LANG_MG00, $LANG_MG01, $LANG_MG02,$LANG_MG10;
+    global $_CONF, $_TABLES, $_USER, $LANG_TSTM01;
     global $LANG01, $LANG24, $LANG29, $LANG_ADMIN, $_IMAGE_TYPE;
 
     $retval = '';
@@ -257,16 +258,16 @@ function plugin_itemlist_testimonials($token)
 //@TODO translation
     $header_arr = array(      // display 'text' and use table field 'field'
         array('text' => $LANG_ADMIN['edit'], 'field' => 'testid', 'align' => 'center', 'width' => '25px'),
-        array('text' => 'Client Name', 'field' => 'clientname'),
-        array('text' => 'Company', 'field' => 'company'),
-        array('text' => 'Date', 'field' => 'tst_date', 'align' => 'center', 'width' => '15%'),
-        array('text' => 'Testimonial','field'=>'text_full'),
+        array('text' => $LANG_TSTM01['client'], 'field' => 'clientname'),
+        array('text' => $LANG_TSTM01['company'], 'field' => 'company'),
+        array('text' => $LANG_TSTM01['tstdate'], 'field' => 'tst_date', 'align' => 'center', 'width' => '15%'),
+        array('text' => $LANG_TSTM01['testimonial'],'field'=>'text_full'),
     );
 
     $text_arr = array('has_menu'    => false,
-                      'title'       => 'Testimonial Submissions',
+                      'title'       => $LANG_TSTM01['submissions'],
                       'help_url'    => '',
-                      'no_data'     => 'No submissions',
+                      'no_data'     => $LANG29[39],
                       'form_url'    => "{$_CONF['site_admin_url']}/moderation.php"
     );
 
@@ -315,7 +316,7 @@ function plugin_getheadercss_testimonials()
 
 function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
 {
-    global $_CONF;
+    global $_CONF, $LANG_TSTM01;
 
     $retval = '';
 
@@ -326,16 +327,15 @@ function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
 
             break;
         case 'text_full' :
-//@TODO translation
             $retval = '
 
-            <button type="button" class="uk-button uk-button-success" data-uk-modal="{target:\'#tstid'.$A['testid'].'\'}">Testimonial</button>
+            <button type="button" class="uk-button uk-button-success" data-uk-modal="{target:\'#tstid'.$A['testid'].'\'}">'.$LANG_TSTM01['testimonial'].'</button>
             <div id="tstid'.$A['testid'].'" class="uk-modal">
                 <div class="uk-modal-dialog">
                     <a class="uk-modal-close uk-close"></a>
-                    <h3>Summary</h3>
+                    <h3>'.$LANG_TSTM01['summary'].'</h3>
                     '.nl2br($A['text_short']).'
-                    <h3>Full Review</h3>
+                    <h3>'.$LANG_TSTM01['full_review'].'</h3>
                     '.nl2br($A['text_full']).'
                 </div>
             </div>

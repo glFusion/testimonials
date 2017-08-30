@@ -1,39 +1,51 @@
 {# begin {templatelocation} #}
 <div class="uk-container testimonial">
-  <h2 class="uk-align-left">What Our Customers Are Saying...</h2>
-  <a class="uk-button uk-button-small uk-button-success uk-align-right" href="{site_url}/testimonials/submit.php">Submit a Testimonial</a>
-  <div style="clear:both;"></div>
-
-  <!-- BEGIN testimonials -->
-  <div class="uk-panel uk-panel-box uk-margin">
-{#    <div class="uk-panel-title">{client}</div> #}
+	<h2 class="uk-align-left">{lang_customers_saying}...</h2>
+	<a class="uk-button uk-button-small uk-button-success uk-align-right" href="{site_url}/testimonials/submit.php">{lang_submit_testimonial}</a>
+	<div style="clear:both;"></div>
+	<!-- BEGIN testimonials -->
+	<div class="uk-panel uk-panel-box uk-margin">
 {!if text_remaining}
-    <a class="uk-panel-badge uk-badge" data-uk-toggle="{ target: '#more{testid}' }">Expand</a>
+		<button class="uk-panel-badge uk-badge" id="morebutton{testid}" onclick="toggleTestimonial('{testid}');return false;">{lang_more}</button>
 {!endif}
-
-    <blockquote>
-      {text_truncated}{!if text_remaining}<span class="uk-hidden" id="more{testid}">{text_remaining}</span>{!endif}
-</blockquote>
-	<footer>
-  <cite>
-
+		<blockquote>
+			{text_truncated}{!if text_remaining}<span id="dotdotdot{testid}" class="">...</span></span><span class="uk-hidden" id="more{testid}">{text_remaining}</span>{!endif}
+		</blockquote>
+		<footer>
+			<cite>
 {!if company_url}
-    <a href="{company_url}" target="_blank">{client}{!if company_name} :: {company_name}{!endif}</a>
+				<a href="{company_url}" target="_blank">{client}{!if company_name} :: {company_name}{!endif}</a>
 {!else}
-    {client}{!if company_name} :: {company_name}{!endif}
+				{client}{!if company_name} :: {company_name}{!endif}
 {!endif}
-  </cite>
-</footer>
+			</cite>
+		</footer>
 
-  </div>
-  <!-- END testimonials -->
+	</div>
+	<!-- END testimonials -->
 
 {!if no_testimonials}
 	<div class="uk-panel uk-panel-box uk-alert-warning">
 		<div class="uk-text-large uk-text-center">
-			No Testimonials Have Been Submitted.
+			{lang_no_testimonials}
 		</div>
 	</div>
 {!endif}
 </div>
+
+<script type="text/javascript">
+	// <![CDATA[
+	function toggleTestimonial($id) {
+		if ( $( '#more' + $id ).is(":visible") ) {
+			$( '#morebutton'+$id ).html('{lang_more}');
+			$( '#more' + $id ).addClass('uk-hidden');
+			$( '#dotdotdot' + $id ).removeClass('uk-hidden');
+		} else {
+			$('#morebutton'+$id ).html('{lang_less}');
+			$( '#more' + $id ).removeClass('uk-hidden');
+			$( '#dotdotdot' + $id ).addClass('uk-hidden');
+		}
+	};
+	// ]]>
+</script>
 {# end {templatelocation} #}

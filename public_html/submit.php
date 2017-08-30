@@ -45,6 +45,11 @@ function submitEntry( $A = array() )
         'lang_cancel'       => $LANG_TSTM01['cancel'],
         'sec_token'         => SEC_createToken(),
         'sec_token_name'    => CSRF_TOKEN,
+        'lang_submit_title' => $LANG_TSTM01['submit_title'],
+        'lang_your_name'    => $LANG_TSTM01['your_name'],
+        'lang_company_name' => $LANG_TSTM01['company_name'],
+        'lang_company_website' => $LANG_TSTM01['company_website'],
+        'lang_submit_help'  => $LANG_TSTM01['submit_help'],
     ));
 
     $A['testid'] = '';
@@ -119,6 +124,8 @@ function saveSubmission()
            ."'".$queue."'"
            .");";
     $result = DB_query($sql);
+
+    CACHE_remove_instance('menu');
 
     COM_setMsg( 'Testimonial Successfully Submitted.', 'warning' );
 
