@@ -33,7 +33,7 @@ Which glFusion blocks to display when viewing Testimonials. For example, left, r
 
 **Allow Anonymous Users to Submit Testimonials**
 
-If this is set to True, anonymous (non-logged-in users) will be able to submit testimonials. See Moderation Queue Below.
+If this is set to Yes, anonymous (non-logged-in users) will be able to submit testimonials. See Moderation Queue Below.
 
 **User Moderation Queue for User Submitted Testimonials**
 
