@@ -300,6 +300,19 @@ function plugin_itemlist_testimonials($token)
     return $retval;
 }
 
+function plugin_getheadercss_testimonials()
+{
+    global $_CONF, $_TST_CONF;
+
+    $styles = array();
+
+    if ( @file_exists($_CONF['path'].'plugins/testimonials/style.css' ) ) {
+        $styles[] = $_CONF['path'].'plugins/testimonials/style.css';
+    }
+	return ($styles);
+}
+
+
 function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
 {
     global $_CONF;
