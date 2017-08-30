@@ -18,24 +18,6 @@
 
 require_once '../lib-common.php';
 
-/*
-	Truncated text to the nearest word based on a character count - substr()
-	http://www.beliefmedia.com/php-truncate-functions
-	preg-match()
-	http://php.net/manual/en/function.preg-match.php
-*/
-function TST_truncate($string, $length, $trimmarker = '') {
-  $strlen = strlen($string);
-  /* mb_substr forces a break at $length if no word (space) boundary */
-  $string = trim(utf8_substr($string, 0, $strlen));
-  if ($strlen > $length) {
-   preg_match('/^.{1,' . ($length - strlen($trimmarker)) . '}\b/su', $string, $match);
-   $string = trim($match['0']) . $trimmarker;
-    } else {
-   $string = trim($string);
-  }
- return $string;
-}
 
 /*
 * Main Function
@@ -79,7 +61,7 @@ $T->set_file (array (
 
 $T->set_var ('header', $LANG_TSTM01['header']);
 
-$sql = "SELECT testid,clientname,company,text_full,text_short,homepage "
+$sql = "SELECT testid,clientname,company,text_full,homepage "
        ."FROM {$_TABLES['testimonials']} WHERE queued=0 "
        . $where
        ."ORDER BY tst_date, testid DESC "
@@ -111,8 +93,6 @@ $T->set_block('page','testimonials','tm');
 
 for ($i = 0; $i < $num; $i++) {
     $A = DB_fetchArray ($result);
-
-    if ( $A['text_full'] == "" ) $A['text_full'] = $A['text_short'];
 
     $truncated = TST_truncate($A['text_full'], 500,'');
     $remaining = utf8_substr($A['text_full'],utf8_strlen($truncated));

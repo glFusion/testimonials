@@ -23,28 +23,21 @@
   </div>
 
   <div class="uk-form-row">
-    <label class="uk-form-label">{lang_company_website}</label>
-    <div class="uk-form-controls">
-      <input type="text" name="testurl" size="50" value="{row_testurl}">
-    </div>
-  </div>
-
-  <div class="uk-form-row">
     <label class="uk-form-label">
-	    {testa_text_short}
-      <div class="uk-text-muted">{text_short_help}</div>
+    	{lang_company_website}
+			<div class="uk-text-muted">{lang_website_help}</div>
     </label>
     <div class="uk-form-controls">
-      <textarea class="required" name="text_short" id="text_short" rows="3" cols="60">{row_text_short}</textarea>
-      <div id="result">Word Count: 0</div>
+      <input type="text" id="testurl" name="testurl" size="50" value="{row_testurl}">
     </div>
   </div>
 
   <div class="uk-form-row">
     <label class="uk-form-label">{testa_text_full}</label>
+    <div class="uk-text-muted">{text_help}</div>
     <div class="uk-form-controls">
-      <textarea name="text_full" rows="10" cols="60">{row_text_full}</textarea>
-      <span class="uk-form-help-inline">{text_help}</span>
+      <textarea class="uk-form-width-large required" id="text_full" name="text_full" rows="10" cols="60">{row_text_full}</textarea>
+      <div id="result">{lang_word_count}: 0</div>
     </div>
   </div>
 
@@ -60,14 +53,26 @@ function wordCount( val ){
 		words : wom ? wom.length : 0,
 	};
 }
-var Textarea = document.getElementById("text_short");
+var Textarea = document.getElementById("text_full");
 var result   = document.getElementById("result");
 Textarea.addEventListener("input", function(){
 	var v = wordCount( this.value );
 	result.innerHTML = (
-	"Word Count: "+ v.words
+	"{lang_word_count}: "+ v.words
 	);
 }, false);
-$( "#testimonialinput" ).validate();
+
+$( "#testimonialinput" ).validate({
+	errorElement: "div",
+	errorClass: "uk-text-danger",
+  rules: {
+    testurl: {
+      url: true
+    },
+		errorPlacement: function(error, element) {
+		  error.insertAfter(element);
+		}
+  }
+});
 </script>
 {# end {templatelocation} #}

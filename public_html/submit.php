@@ -42,13 +42,11 @@ function submitEntry( $A = array() )
         'client_help'       => $LANG_TSTM01['client_help'],
         'company_text'      => $LANG_TSTM01['company'],
         'company_help'      => $LANG_TSTM01['company_help'],
-        'testa_text_short'  => $LANG_TSTM01['text_short'],
-        'text_short_help'   => $LANG_TSTM01['text_short_help'],
         'testa_text_full'   => $LANG_TSTM01['text_full'],
         'text_full_help'    => $LANG_TSTM01['text_full_help'],
         'testdate_text'     => $LANG_TSTM01['tstdate'],
         'url_text'          => $LANG_TSTM01['homepage'],
-        'url_help'          => $LANG_TSTM01['homepage_help'],
+        'url_help'          => $LANG_TSTM01['website_help'],
         'date_help'         => 'yyyy-mm-dd format',
         'lang_save'         => $LANG_TSTM01['save'],
         'lang_cancel'       => $LANG_TSTM01['cancel'],
@@ -58,7 +56,9 @@ function submitEntry( $A = array() )
         'lang_your_name'    => $LANG_TSTM01['your_name'],
         'lang_company_name' => $LANG_TSTM01['company_name'],
         'lang_company_website' => $LANG_TSTM01['company_website'],
+        'lang_website_help' => $LANG_TSTM01['website_help'],
         'lang_submit_help'  => $LANG_TSTM01['submit_help'],
+        'lang_word_count'   => $LANG_TSTM01['word_count'],
     ));
 
     $A['testid'] = '';
@@ -66,7 +66,6 @@ function submitEntry( $A = array() )
     $A['company'] = '';
     $A['homepage'] = '';
     $A['tst_date'] = '';
-    $A['text_short']= '';
     $A['text_full']= '';
 
     $T->set_var(array(
@@ -75,7 +74,6 @@ function submitEntry( $A = array() )
         'row_company'   => $A['company'],
         'row_testurl'   => $A['homepage'],
         'row_tstdate'   => $A['tst_date'],
-        'row_text_short'=> $A['text_short'],
         'row_text_full' => $A['text_full'],
     ));
     if (!empty($testid) && SEC_hasRights('testimonials.admin')) {
@@ -105,14 +103,12 @@ function saveSubmission()
     $company     = $_POST['company'];
     $company_url = COM_applyFilter($_POST['testurl']);
     $tst_date    = date('Y-m-d');
-    $tst_short   = $_POST['text_short'];
     $tst_full    = $_POST['text_full'];
 
     $filter = new sanitizer();
 
     $filter->setPostmode('text');
     $text_full      = $filter->filterText($filter->censor($tst_full));
-    $text_short     = $filter->filterText($filter->censor($tst_short));
     $client_name    = $filter->filterText($filter->censor($clientName));
     $company_name   = $filter->filterText($filter->censor($company));
     $company_url    = $filter->sanitizeUrl($company_url);
@@ -123,8 +119,8 @@ function saveSubmission()
         $queue = 0;
     }
 
-    $sql = "INSERT INTO {$_TABLES['testimonials']} (text_short,text_full,clientname,company,homepage,tst_date,queued) "
-           ." VALUES ('". $filter->prepareForDB($text_short)."',"
+    $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date,queued) "
+           ." VALUES ("
            ."'".$filter->prepareForDB($text_full)."',"
            ."'".$filter->prepareForDB($client_name)."',"
            ."'".$filter->prepareForDB($company_name)."',"
@@ -143,7 +139,11 @@ function saveSubmission()
 
     CACHE_remove_instance('menu');
 
-    COM_setMsg( 'Testimonial Successfully Submitted.', 'warning' );
+    if ( $queue ) {
+        COM_setMsg( $LANG_TSTM01['testimonial_submitted'], 'error' );
+    } else {
+        COM_setMsg( $LANG_TSTM01['saved_success'],'warning');
+    }
 
     COM_refresh($_CONF['site_url'].'/testimonials/index.php');
 }

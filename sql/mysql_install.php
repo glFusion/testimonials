@@ -24,7 +24,6 @@ if (!defined ('GVERSION')) {
 
 $_SQL['testimonials'] = "CREATE TABLE {$_TABLES['testimonials']} (
     testid int(15) NOT NULL auto_increment,
-    text_short text,
     text_full text,
     clientname text,
     company text,

@@ -41,6 +41,8 @@ if (file_exists ($langfile)) {
 */
 require_once $_CONF['path'] . 'plugins/testimonials/testimonials.php';
 
+if ( !isset($_TST_CONF['displayblocks'])) $_TST_CONF['displayblocks'] = 'menu';
+
 switch( $_TST_CONF['displayblocks'] ) {
     case 0 : // left only
     case 2 :
@@ -384,12 +386,12 @@ function plugin_dopluginsearch_testimonials($query, $datestart, $dateend, $topic
 
     $query = trim(DB_escapeString(htmlspecialchars($query)));
 
-    $sql = " SELECT testid AS id, text_short AS description,text_full,UNIX_TIMESTAMP(tst_date) AS date, views AS hits, CONCAT(clientname,' ',company) AS title, CONCAT('/testimonials/index.php?id=',testid) AS url ";
+    $sql = " SELECT testid AS id, text_full AS description,text_full,UNIX_TIMESTAMP(tst_date) AS date, views AS hits, CONCAT(clientname,' ',company) AS title, CONCAT('/testimonials/index.php?id=',testid) AS url ";
     $sql .= "FROM {$_TABLES['testimonials']} ";
     $sql .= "WHERE queued = 0 ";
 
     $search = new SearchCriteria('testimonials', 'Testimonials');
-    $columns = array('text_short','text_full');
+    $columns = array('text_full');
     $sql .= $search->getDateRangeSQL('AND', '(UNIX_TIMESTAMP(tst_date))', $datestart, $dateend);
     list($sql,$ftsql) = $search->buildSearchSQL($keyType, $query, $columns, $sql);
     $search->setSQL($sql);
@@ -427,10 +429,9 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                 $fields[] = 'text_full';
                 break;
             case 'excerpt':
-                $fields[] = 'text_short';
+                $fields[] = 'text_full';
                 break;
             case 'searchidx' :
-                $fields[] = 'text_short';
                 $fields[] = 'text_full';
                 $fields[] = "company";
                 $fields[] = "clientname";
@@ -508,10 +509,10 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                     $props[$p] = nl2br($A['text_full']);
                     break;
                 case 'excerpt':
-                    $props[$p] = nl2br($A['text_short']);
+                    $props[$p] = nl2br(TST_truncate($A['text_full'],300,'...'));
                     break;
                 case 'searchidx' :
-                    $props[$p] = $A['text_short'].' '.$A['text_full'].' '.$A['company'].' '.$A['clientname'];
+                    $props[$p] = $A['text_full'].' '.$A['company'].' '.$A['clientname'];
                     break;
                 case 'raw-description':
                     $props[$p] = $A['text_full'];
@@ -613,9 +614,6 @@ function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
             <div id="tstid'.$A['testid'].'" class="uk-modal">
                 <div class="uk-modal-dialog">
                     <a class="uk-modal-close uk-close"></a>
-                    <h3>'.$LANG_TSTM01['summary'].'</h3>
-                    '.nl2br($A['text_short']).'
-                    <h3>'.$LANG_TSTM01['full_review'].'</h3>
                     '.nl2br($A['text_full']).'
                 </div>
             </div>
@@ -655,7 +653,7 @@ function phpblock_testimonials()
 
     $randomSelect = "RAND(NOW()) ";
 
-    $sql = "SELECT testid,clientname,company,homepage,text_short
+    $sql = "SELECT testid,clientname,company,homepage,text_full
 					FROM {$_TABLES['testimonials']}
 					ORDER BY RAND(NOW()) LIMIT 1";
 
@@ -664,10 +662,30 @@ function phpblock_testimonials()
         $A = DB_fetchArray($result);
         $addhit = DB_query("update {$_TABLES['testimonials']} set views = views + 1 where testid = $A[testid]");
 
-    	$retval .= '<p>'.nl2br($A['text_short']).'</p>';
+    	$retval .= '<p>'.nl2br(TST_truncate($A['text_full'],300,'...')).'</p>';
     	$retval .= '<p align="right">'.$A['clientname'].'<br>';
     	$retval .= '<a href="'.$A['homepage'].'" target="_blank">'.$A['company'].'</a></p>';
 	}
     return $retval;
 }
+
+/*
+	Truncated text to the nearest word based on a character count - substr()
+	http://www.beliefmedia.com/php-truncate-functions
+	preg-match()
+	http://php.net/manual/en/function.preg-match.php
+*/
+function TST_truncate($string, $length, $trimmarker = '') {
+  $strlen = strlen($string);
+  /* mb_substr forces a break at $length if no word (space) boundary */
+  $string = trim(utf8_substr($string, 0, $strlen));
+  if ($strlen > $length) {
+   preg_match('/^.{1,' . ($length - strlen($trimmarker)) . '}\b/su', $string, $match);
+   $string = trim($match['0']) . $trimmarker;
+    } else {
+   $string = trim($string);
+  }
+ return $string;
+}
+
 ?>

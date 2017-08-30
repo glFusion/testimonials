@@ -46,7 +46,7 @@ function listEntries()
             array('text' => $LANG_TSTM01['client'], 'field' => 'clientname', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['company'], 'field' => 'company', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['tstdate'], 'field' => 'tst_date', 'sort' => true, 'align' => 'left'),
-            array('text' => $LANG_TSTM01['testimonial'], 'field' => 'text_short', 'sort' => false, 'align' => 'center'),
+            array('text' => $LANG_TSTM01['testimonial'], 'field' => 'text_full', 'sort' => false, 'align' => 'center'),
             array('text' => $LANG_TSTM01['edit'],   'field' => 'testid', 'sort' => false, 'align' => 'center'),
     );
     $defsort_arr = array('field'     => 'tst_date',
@@ -60,7 +60,7 @@ function listEntries()
             'no_data'       => $LANG_TSTM01['no_testimonials'],
     );
 
-    $sql = "SELECT testid AS id1,testid,clientname,company,tst_date,text_short,text_full,views "
+    $sql = "SELECT testid AS id1,testid,clientname,company,tst_date,text_full,views "
             . "FROM {$_TABLES['testimonials']} ";
 
     $query_arr = array('table' => 'testimonials',
@@ -119,8 +119,8 @@ function TST_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
             $retval = '<a href="'.$url.'"><i class="uk-icon uk-icon-pencil"></i></a>';
             break;
 
-        case 'text_short' :
-            $retval = '<a class="'.COM_getToolTipStyle().'" title="' . htmlspecialchars($A['text_short']) . '<br><br>'.htmlspecialchars($A['text_full']) . '"><i class="uk-icon uk-icon-info-circle"></i></a>';
+        case 'text_full' :
+            $retval = '<a class="'.COM_getToolTipStyle().'" title="' . htmlspecialchars($A['text_full']).'"><i class="uk-icon uk-icon-info-circle"></i></a>';
             break;
 
         default:
@@ -159,22 +159,20 @@ function saveEntry()
     $company     = $_POST['company'];
     $company_url = COM_applyFilter($_POST['testurl']);
     $tst_date    = COM_applyFilter($_POST['tstdate']);
-    $tst_short   = $_POST['text_short'];
     $tst_full    = $_POST['text_full'];
 
     $filter = new sanitizer();
 
     $filter->setPostmode('text');
     $text_full = $filter->filterHTML($filter->censor($tst_full));
-    $text_short = $filter->filterHTML($filter->censor($tst_short));
     $client_name = $filter->filterText($filter->censor($clientName));
     $company_name = $filter->filterText($filter->censor($company));
 
     $company_url = $filter->sanitizeUrl($company_url);
 
     if ( $testid == 0 ) {
-        $sql = "INSERT INTO {$_TABLES['testimonials']} (text_short,text_full,clientname,company,homepage,tst_date) "
-               ." VALUES ('". $filter->prepareForDB($text_short)."',"
+        $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date) "
+               ." VALUES ("
                ."'".$filter->prepareForDB($text_full)."',"
                ."'".$filter->prepareForDB($client_name)."',"
                ."'".$filter->prepareForDB($company_name)."',"
@@ -185,7 +183,6 @@ function saveEntry()
         $testid = DB_insertId($result);
     } else {
         $sql = "UPDATE {$_TABLES['testimonials']} SET "
-               ."text_short='". $filter->prepareForDB($text_short)."',"
                ."text_full='".$filter->prepareForDB($text_full)."',"
                ."clientname='".$filter->prepareForDB($client_name)."',"
                ."company='".$filter->prepareForDB($company_name)."',"
@@ -224,13 +221,11 @@ function editEntry($mode,$testid='')
         'client_help'       => $LANG_TSTM01['client_help'],
         'company_text'      => $LANG_TSTM01['company'],
         'company_help'      => $LANG_TSTM01['company_help'],
-        'testa_text_short'  => $LANG_TSTM01['text_short'],
-        'text_short_help'   => $LANG_TSTM01['text_short_help'],
         'testa_text_full'   => $LANG_TSTM01['text_full'],
         'text_full_help'    => $LANG_TSTM01['text_full_help'],
         'testdate_text'     => $LANG_TSTM01['tstdate'],
         'url_text'          => $LANG_TSTM01['homepage'],
-        'url_help'          => $LANG_TSTM01['homepage_help'],
+        'url_help'          => $LANG_TSTM01['website_help'],
         'date_help'         => 'yyyy-mm-dd format',
         'lang_save'         => $LANG_TSTM01['save'],
         'lang_cancel'       => $LANG_TSTM01['cancel'],
@@ -248,7 +243,6 @@ function editEntry($mode,$testid='')
         $A['company'] = '';
         $A['homepage'] = '';
         $A['tst_date'] = '';
-        $A['text_short']= '';
         $A['text_full']= '';
     }
     $T->set_var(array(
@@ -257,14 +251,14 @@ function editEntry($mode,$testid='')
         'row_company'   => $A['company'],
         'row_testurl'   => $A['homepage'],
         'row_tstdate'   => $A['tst_date'],
-        'row_text_short'=> $A['text_short'],
         'row_text_full' => $A['text_full'],
     ));
+/* ---
     if (!empty($testid) && SEC_hasRights('testimonials.admin')) {
         $T->set_var ('delete_option', '<input type="submit" value="' . $LANG_TSTM01['delete'] . '" name="mode" onClick="return delconfirm()">');
         $T->set_var ('lang_delete',$LANG_TSTM01['delete']);
     }
-
+--- */
     if (!empty($testid)) {
         $T->set_var ('cancel_option', '<input type="submit" value="' . $LANG_TSTM01['cancel'] . '" name="mode">');
         $T->set_var('lang_cancel',$LANG_TSTM01['cancel']);
@@ -337,6 +331,10 @@ switch ( $cmd ) {
             delEntry();
         }
         $page = listEntries();
+        break;
+
+    case 'delete' :
+        $page = 'Not implemented yet';
         break;
 
     case 'list' :

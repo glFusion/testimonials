@@ -46,12 +46,10 @@ $LANG_TSTM01 = array (
     'create_new'		=> 'Add New',
     'views'				=> 'Views',
     'testament'			=> 'Testimonial',
-    'text_short'		=> 'Brief Testimonial',
-    'text_short_help'	=> '25-30 word summary for random block',
     'text_full'			=> 'Full Testimonial',
     'text_full_help'	=> 'Complete text for testimonials page',
-    'homepage'			=> 'URL',
-    'homepage_help'		=> 'Client website (include http://)',
+    'homepage'			=> 'Client Website',
+    'website_help'      => '(include http:// or https://)',
     'delete'			=> 'Delete',
     'save'				=> 'Save',
     'cancel'			=> 'Cancel',
@@ -66,7 +64,7 @@ $LANG_TSTM01 = array (
     'your_name'         => 'Your Name',
     'company_name'      => 'Company Name',
     'company_website'   => 'Company Website',
-    'submit_help'       => 'Provide your testimonial below. You must include your name and brief testimonal. You can enter a longer, more detailed testimonial in the Full Testimonial field',
+    'submit_help'       => 'Provide your testimonial below. You must include your name and the testimonal. The other fields, Company and Website are optional but always appreciated if you include them. If you provide a Company Website, there will be a link from the testimonial to your site.',
     'submission_approved' => 'Testimonial Submission has been approved',
     'testimonial'       => 'Testimonial',
     'submissions'       => 'Testimonial Submissions',
@@ -74,6 +72,8 @@ $LANG_TSTM01 = array (
     'full_review'       => 'Full Review',
     'saved_success'     => 'Testimonial successfully saved.',
     'admin_help'        => 'Admin screen help text for testimonial plugin',
+    'word_count'        => 'Word Count',
+    'testimonial_submitted' => 'Testimonial Successfully Submitted. Once your testimonial is reviewed and approved by our moderators, it will be availabe on the Testimonials Page. Thank you!',
 );
 
 $LANG_configsections['testimonials'] = array(
@@ -100,6 +100,7 @@ $LANG_fs['testimonials'] = array(
 $LANG_configselects['testimonials'] = array(
     0  => array('True' => 1, 'False' => 0 ),
     1  => array('Left Blocks' => 0, 'Right Blocks' => 1, 'All Blocks' => 2, 'No Blocks' => 3),
+    2  => array('Yes' => 1, 'No' => 0 ),
 );
 
 ?>
