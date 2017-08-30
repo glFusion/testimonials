@@ -1,7 +1,9 @@
 {# begin {templatelocation} #}
 <div class="uk-container testimonial">
 	<h2 class="uk-align-left">{lang_customers_saying}...</h2>
+{!if lang_submit_testimonial}
 	<a class="uk-button uk-button-small uk-button-success uk-align-right" href="{site_url}/testimonials/submit.php">{lang_submit_testimonial}</a>
+{!endif}
 	<div style="clear:both;"></div>
 	<!-- BEGIN testimonials -->
 	<div class="uk-panel uk-panel-box uk-margin">
@@ -32,6 +34,8 @@
 	</div>
 {!endif}
 </div>
+
+{pagination}
 
 <script type="text/javascript">
 	// <![CDATA[
