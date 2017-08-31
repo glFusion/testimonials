@@ -319,16 +319,19 @@ function plugin_itemlist_testimonials($token)
     return $retval;
 }
 
-function plugin_getheadercss_testimonials()
-{
-    global $_CONF, $_TST_CONF;
+function plugin_getheadercss_testimonials() {
+    global $_CONF;
 
     $styles = array();
 
-    if ( @file_exists($_CONF['path'].'plugins/testimonials/style.css' ) ) {
-        $styles[] = $_CONF['path'].'plugins/testimonials/style.css';
+    if ( @file_exists($_CONF['path_layout'].'plugins/testimonials/style.css') ) {
+        $styles[] = $_CONF['path_layout'].'plugins/testimonials/style.css';
+    } else if ( @file_exists($_CONF['path'] . 'plugins/testimonials/custom/style.css') ) {
+        $styles[] = $_CONF['path'] . 'plugins/testimonials/css/custom/style.css';
+    } else {
+        $styles[] = $_CONF['path'] . 'plugins/testimonials/style.css';
     }
-	return ($styles);
+    return($styles);
 }
 
 
@@ -664,7 +667,11 @@ function phpblock_testimonials()
 
     	$retval .= '<p>'.nl2br(TST_truncate($A['text_full'],300,'...')).'</p>';
     	$retval .= '<p align="right">'.$A['clientname'].'<br>';
-    	$retval .= '<a href="'.$A['homepage'].'" target="_blank">'.$A['company'].'</a></p>';
+    	if ( $A['homepage'] != "" )  {
+        	$retval .= '<a href="'.$A['homepage'].'" target="_blank">'.$A['company'].'</a></p>';
+        } else {
+            $retval .= $A['company'].'</p>';
+        }
 	}
     return $retval;
 }
