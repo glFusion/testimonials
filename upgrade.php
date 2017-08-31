@@ -35,7 +35,7 @@ function testimonials_upgrade()
             $c->add('disable_submissions', 0,'select', 0, 0, 0, 7, true, 'testimonials');
 
         case '0.3.0' :
-            DB_query("ALTER TABLE {$_TABLES['testimonials'] ADD email VARCHAR(96) NULL DEFAULT NULL AFTER owner_id",1);
+            DB_query("ALTER TABLE {$_TABLES['testimonials']} ADD email VARCHAR(96) NULL DEFAULT NULL AFTER owner_id",1);
 
         default:
             DB_query("UPDATE {$_TABLES['plugins']} SET pi_version='".$_TST_CONF['pi_version']."',pi_gl_version='".$_TST_CONF['gl_version']."' WHERE pi_name='testimonials' LIMIT 1");
