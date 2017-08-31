@@ -149,6 +149,10 @@ function saveSubmission()
     COM_refresh($_CONF['site_url'].'/testimonials/index.php');
 }
 
+if ( $_TST_CONF['disable_submissions'] == true ) {
+    COM_refresh($_CONF['site_url'].'/testimonials/index.php');
+}
+
 if ( COM_isAnonUser() && $_TST_CONF['anonymous_submit'] == false ) {
     $page = SEC_loginRequiredForm();
 } else {

@@ -85,7 +85,7 @@ $T->set_var(array(
     'pagination' => $pagination,
 ));
 
-if ( !COM_isAnonUser() || $_TST_CONF['anonymous_submit'] == true ) {
+if ( $_TST_CONF['disable_submissions'] == false && (!COM_isAnonUser() || $_TST_CONF['anonymous_submit'] == true ) ) {
     $T->set_var('lang_submit_testimonial',$LANG_TSTM01['submit_testimonial']);
 }
 
