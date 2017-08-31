@@ -2,7 +2,7 @@
 
 For the latest, and more detailed, documentation, please see the [Testimonials Plugin Wiki Page](https://www.glfusion.org/wiki/glfusion:plugins:testimonials:start)
 
-### OVERVIEW
+### Overview
 
 This is a plugin for glFusion that will allow you to showcase your testimonials.
 Site administrators can manually enter testimonials received via email or other
@@ -12,22 +12,34 @@ review prior to publishing.
 A Testimonial Block is included that will pull random testimonials to display
 on your site.
 
-### SYSTEM REQUIREMENTS
+### Features
+
+The Testimonials plugin offers several advanced features:
+
+ * Allows users to submit their own testimonials
+ * Option to allow any user (logged in or not) to submit testimonials or it can be limited to only logged in users or user submission can be completely disabled.
+ * Testimonials can be queued for moderator approval
+ * Email notification to moderators on new submissions
+ * Email notification to user when testimonial is approved
+ * Modern user interface for displaying testimonials - automatically trims long testimonials with More / Hide button to toggle viewing full testimonial
+* Random block to automatically display testimonials  
+
+### System Requirements
 
 The Testimonials Plugin has the following system requirements:
 
 * PHP 5.3.3 and higher.
 * glFusion v1.6.0 or newer
 
-### INSTALLATION
+### Installation
 
 The Testimonials Plugin uses the glFusion automated plugin installer. Simply upload the distribution using the glFusion plugin installer located in the Plugin Administration page.
 
-### UPGRADING
+### Upgrading
 
 The upgrade process is identical to the installation process, simply upload the distribution from the Plugin Administration page.
 
-### CONFIGURATION
+### Configuration
 
 **Display Blocks**
 
@@ -53,7 +65,7 @@ The amount of time (in seconds) that a user must wait before submitting a new te
 
 The number of testimonials to display per page.
 
-### LICENSE
+### License
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
