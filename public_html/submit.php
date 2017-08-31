@@ -131,8 +131,9 @@ function saveSubmission()
            .");";
     $result = DB_query($sql);
 
+    $testid = DB_insertId($result);
+
     if ( $_TST_CONF['queue_submissions'] != true) {
-        $testid = DB_insertId($result);
         PLG_itemSaved($testid,'testimonials');
     }
 
@@ -146,7 +147,100 @@ function saveSubmission()
         COM_setMsg( $LANG_TSTM01['saved_success'],'warning');
     }
 
+    if ( $queue ) {
+        TST_sendNotification($testid);
+    }
+
     COM_refresh($_CONF['site_url'].'/testimonials/index.php');
+}
+
+/**
+* Send an email notification for a new submission.
+*
+* @param    int     $testid Testimonial ID
+*
+*/
+function TST_sendNotification($testid)
+{
+    global $_CONF, $_TST_CONF, $_USER, $_TABLES, $LANG_TSTM01;
+
+    $result = DB_query("SELECT * FROM {$_TABLES['testimonials']} WHERE testid=". (int) $testid . ' AND queued=1');
+    if ( DB_numRows($result) > 0 ) {
+        $row = DB_fetchArray($result);
+
+        $mailbody  = $LANG_TSTM01['mail_body'].'<br><br>';
+        $mailbody .= sprintf($LANG_TSTM01['mail_mod_link'],$_CONF['site_admin_url'].'/moderation.php');
+        $mailbody .= '<br>';
+
+        $testimonials_grp_id = DB_getItem($_TABLES['groups'],'grp_id','grp_name="testimonials Admin"');
+        if ( $testimonials_grp_id === NULL ) return;
+        $groups = TST_getGroupList($testimonials_grp_id);
+        $groupList = implode(',',$groups);
+	    $sql = "SELECT DISTINCT {$_TABLES['users']}.uid,username,fullname,email "
+	          ."FROM {$_TABLES['group_assignments']},{$_TABLES['users']} "
+	          ."WHERE {$_TABLES['users']}.uid > 1 "
+	          ."AND {$_TABLES['users']}.uid = {$_TABLES['group_assignments']}.ug_uid "
+	          ."AND ({$_TABLES['group_assignments']}.ug_main_grp_id IN (".$groupList."))";
+        $result = DB_query($sql);
+        $nRows = DB_numRows($result);
+        $toCount = 0;
+        $to = array();
+        $msgData = array();
+        for ($i=0;$i < $nRows; $i++ ) {
+            $row = DB_fetchArray($result);
+            if ( $row['email'] != '' ) {
+                $toCount++;
+                $to[] = array('email' => $row['email'], 'name' => $row['username']);
+            }
+        }
+        if ( $toCount > 0 ) {
+            $msgData['htmlmessage'] = $mailbody;
+            $msgData['textmessage'] = $mailbody;
+            $msgData['subject'] = $LANG_TSTM01['mail_subject'];
+            $msgData['from']['email'] = $_CONF['site_mail'];
+            $msgData['from']['name'] = $_CONF['site_name'];
+            $msgData['to'] = $to;
+            COM_emailNotification( $msgData );
+    	} else {
+        	COM_errorLog("Testimonials: Error - Did not find any moderators to email");
+    	}
+    }
+}
+
+
+/**
+* Get an array of all groups this group belongs to.
+*
+* @param   basegroup   int     id of group
+* @return              array   array of all groups 'basegroup' belongs to
+*
+*/
+function TST_getGroupList ($basegroup)
+{
+    global $_TABLES;
+
+    $to_check = array ();
+    array_push ($to_check, $basegroup);
+
+    $checked = array ();
+
+    while (sizeof ($to_check) > 0) {
+        $thisgroup = array_pop ($to_check);
+        if ($thisgroup > 0) {
+            $result = DB_query ("SELECT ug_grp_id FROM {$_TABLES['group_assignments']} WHERE ug_main_grp_id = $thisgroup");
+            $numGroups = DB_numRows ($result);
+            for ($i = 0; $i < $numGroups; $i++) {
+                $A = DB_fetchArray ($result);
+                if (!in_array ($A['ug_grp_id'], $checked)) {
+                    if (!in_array ($A['ug_grp_id'], $to_check)) {
+                        array_push ($to_check, $A['ug_grp_id']);
+                    }
+                }
+            }
+            $checked[] = $thisgroup;
+        }
+    }
+    return $checked;
 }
 
 if ( $_TST_CONF['disable_submissions'] == true ) {

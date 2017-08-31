@@ -77,6 +77,9 @@ $LANG_TSTM01 = array (
     'speedlimit_msg'    => 'You must wait %d minutes between testimonial submissions.',
     'read_full_testimonial'  => 'Read Full Testimonial',
     'view_all'          => 'View All Testimonials',
+    'mail_subject'      => 'A New Testimonial has been Submitted',
+    'mail_body'         => 'A new Testimonial has been submitted for review.',
+    'mail_mod_link'     => 'Please view the <a href="%s">Moderation Queue</a> to approve or delete the submission.',
 );
 
 $LANG_configsections['testimonials'] = array(
