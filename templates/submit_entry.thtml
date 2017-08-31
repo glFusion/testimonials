@@ -5,6 +5,12 @@
 	{lang_submit_help}
 </div>
 
+{!if errors}
+<div class="uk-alert uk-alert-danger">
+  {errors}
+</div>
+{!endif}
+
 <form id="testimonialinput" class="uk-form uk-form-horizontal" action="{site_url}/testimonials/submit.php" method="post">
   <input type="hidden" name="{sec_token_name}" value="{sec_token}">
 
@@ -14,6 +20,18 @@
       <input class="required" type="text" name="clientname" size="30" value="{row_client}">
     </div>
   </div>
+
+{!if anonymous_user}
+  <div class="uk-form-row">
+    <label class="uk-form-label">
+      {lang_email}
+      <div class="uk-text-muted">{lang_email_help}</div>
+    </label>
+    <div class="uk-form-controls">
+      <input class="required email" type="text" name="email" size="30" value="{row_email}">
+    </div>
+  </div>
+{!endif}
 
   <div class="uk-form-row">
     <label class="uk-form-label">{lang_company_name}</label>

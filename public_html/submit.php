@@ -18,9 +18,9 @@
 
 require_once '../lib-common.php';
 
-function submitEntry( $A = array() )
+function submitEntry( $A = array(), $errors = array() )
 {
-    global $_CONF, $_TST_CONF, $_TABLES, $LANG_TSTM01;
+    global $_CONF, $_TST_CONF, $_USER, $_TABLES, $LANG_TSTM01;
 
     $retval = '';
     $display = '';
@@ -28,12 +28,12 @@ function submitEntry( $A = array() )
     COM_clearSpeedlimit ($_TST_CONF['speedlimit'], 'testimonials');
     $last = 0;
     $last = COM_checkSpeedlimit ('testimonials');
-    if ($last > 0) {
+
+    if ($last > 0 && count($A) == 0 ) {
         $slMsg = sprintf($LANG_TSTM01['speedlimit_msg'], (int) ($_TST_CONF['speedlimit'] / 60));
         COM_setMsg($slMsg,'error' );
         COM_refresh($_CONF['site_url'].'/testimonials/index.php');
     }
-
 
     $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
     $T->set_file ('form','submit_entry.thtml');
@@ -60,33 +60,37 @@ function submitEntry( $A = array() )
         'lang_website_help' => $LANG_TSTM01['website_help'],
         'lang_submit_help'  => $LANG_TSTM01['submit_help'],
         'lang_word_count'   => $LANG_TSTM01['word_count'],
+        'lang_email'        => $LANG_TSTM01['email'],
+        'lang_email_help'   => $LANG_TSTM01['email_help'],
     ));
 
-    $A['testid'] = '';
-    $A['clientname'] = '';
-    $A['company'] = '';
-    $A['homepage'] = '';
-    $A['tst_date'] = '';
-    $A['text_full']= '';
+    if ( COM_isAnonUser() || $_USER['email'] == '' ) $T->set_var('anonymous_user',true);
+
+    if ( count($A) == 0 ) {
+        $A['testid'] = '';
+        $A['clientname'] = '';
+        $A['company'] = '';
+        $A['homepage'] = '';
+        $A['tst_date'] = '';
+        $A['text_full']= '';
+        $A['email'] = '';
+        $A['owner_id'] = 1;
+    }
 
     $T->set_var(array(
-        'row_testid'    => $A['testid'],
         'row_client'    => $A['clientname'],
         'row_company'   => $A['company'],
         'row_testurl'   => $A['homepage'],
         'row_tstdate'   => $A['tst_date'],
         'row_text_full' => $A['text_full'],
+        'row_email'     => $A['email'],
     ));
-    if (!empty($testid) && SEC_hasRights('testimonials.admin')) {
-        $T->set_var ('delete_option', '<input type="submit" value="' . $LANG_TSTM01['delete'] . '" name="mode" onClick="return delconfirm()">');
-        $T->set_var ('lang_delete',$LANG_TSTM01['delete']);
-    }
 
-    if (!empty($testid)) {
-        $T->set_var ('cancel_option', '<input type="submit" value="' . $LANG_TSTM01['cancel'] . '" name="mode">');
-        $T->set_var('lang_cancel',$LANG_TSTM01['cancel']);
+    $errorMessage = '';
+    if ( count($errors) > 0 ) {
+        $errorMessage = implode("<br>",$errors);
+        $T->set_var('errors',$errorMessage);
     }
-
     $T->parse('output', 'form');
     $retval .= $T->finish($T->get_var('output'));
     return $retval;
@@ -94,25 +98,49 @@ function submitEntry( $A = array() )
 
 function saveSubmission()
 {
-    global $_CONF, $_TST_CONF, $_TABLES, $LANG_TSTM01;
+    global $_CONF, $_TST_CONF, $_USER, $_TABLES, $LANG_TSTM01, $LANG_TST_ERRORS;
 
-    // we need to do some error checking here - make sure everything
-    // is set and in proper format (such as date).
+    $errors = array();
 
+    if (!COM_isAnonUser() ) {
+        $A['owner_id'] = $_USER['uid'];
+    } else {
+        $A['owner_id'] = 1;
+    }
 
-    $clientName  = $_POST['clientname'];
-    $company     = $_POST['company'];
-    $company_url = COM_applyFilter($_POST['testurl']);
-    $tst_date    = date('Y-m-d');
-    $tst_full    = $_POST['text_full'];
+    if ( COM_isAnonUser() || $_USER['email'] == "" ) {
+        $A['email'] = COM_applyFilter($_POST['email']);
+    }
+
+    $A['clientname']  = $_POST['clientname'];
+    $A['company']     = $_POST['company'];
+    $A['homepage']    = COM_applyFilter($_POST['testurl']);
+    $A['tst_date']    = date('Y-m-d');
+    $A['text_full']   = $_POST['text_full'];
 
     $filter = new sanitizer();
 
     $filter->setPostmode('text');
-    $text_full      = $filter->filterText($filter->censor($tst_full));
-    $client_name    = $filter->filterText($filter->censor($clientName));
-    $company_name   = $filter->filterText($filter->censor($company));
-    $company_url    = $filter->sanitizeUrl($company_url);
+    $A['text_full']     = $filter->filterText($filter->censor($A['text_full']));
+    $A['clientname']    = $filter->filterText($filter->censor($A['clientname']));
+    $A['company']       = $filter->filterText($filter->censor($A['company']));
+    $A['homepage']      = $filter->sanitizeUrl($A['homepage']);
+
+    if ( utf8_strlen(trim($A['clientname'])) === 0 ) {
+        $errors[] = $LANG_TST_ERRORS['invalid_name'];
+    }
+
+    if ( !COM_isEmail( $A['email'])  ) {
+        $errors[] = $LANG_TST_ERRORS['invalid_email'];
+    }
+
+    if ( utf8_strlen(trim($A['text_full'])) === 0 ) {
+        $errors[] = $LANG_TST_ERRORS['invalid_testimonial'];
+    }
+
+    if ( count($errors) > 0 ) {
+        return submitEntry($A,$errors);
+    }
 
     if ( $_TST_CONF['queue_submissions'] == true ) {
         $queue = 1;
@@ -120,14 +148,16 @@ function saveSubmission()
         $queue = 0;
     }
 
-    $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date,queued) "
+    $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date,queued,owner_id,email) "
            ." VALUES ("
-           ."'".$filter->prepareForDB($text_full)."',"
-           ."'".$filter->prepareForDB($client_name)."',"
-           ."'".$filter->prepareForDB($company_name)."',"
-           ."'".$filter->prepareForDB($company_url)."',"
-           ."'".$filter->prepareForDB($tst_date)."',"
-           ."'".$queue."'"
+           ."'".$filter->prepareForDB($A['text_full'])."',"
+           ."'".$filter->prepareForDB($A['clientname'])."',"
+           ."'".$filter->prepareForDB($A['company'])."',"
+           ."'".$filter->prepareForDB($A['homepage'])."',"
+           ."'".$filter->prepareForDB($A['tst_date'])."',"
+           ."'".$queue."',"
+           . $filter->prepareForDB($A['owner_id']).","
+           . "'".$filter->prepareForDB($A['email'])."'"
            .");";
     $result = DB_query($sql);
 
@@ -269,7 +299,7 @@ if ( COM_isAnonUser() && $_TST_CONF['anonymous_submit'] == false ) {
             if (SEC_checkToken()) {
                 $page = saveSubmission();
             }
-
+            break;
         default :
             COM_refresh($_CONF['site_url'].'/testimonials/index.php');
             break;
