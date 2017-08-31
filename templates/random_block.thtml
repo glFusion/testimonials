@@ -1,5 +1,8 @@
 <p>
   {testimonial_text}
+{!if truncated}
+ <a href="{testimonial_link}">{lang_read_full}</a>
+{!endif}
 </p>
 <p class="uk-text-right">
   {client_name}

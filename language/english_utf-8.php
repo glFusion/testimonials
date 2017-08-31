@@ -75,6 +75,7 @@ $LANG_TSTM01 = array (
     'word_count'        => 'Word Count',
     'testimonial_submitted' => 'Testimonial Successfully Submitted. Once your testimonial is reviewed and approved by our moderators, it will be availabe on the Testimonials Page. Thank you!',
     'speedlimit_msg'    => 'You must wait %d minutes between testimonial submissions.',
+    'read_full_testimonial'  => 'Read Full Testimonial',
 );
 
 $LANG_configsections['testimonials'] = array(

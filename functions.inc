@@ -650,7 +650,7 @@ function plugin_chkVersion_testimonials()
 */
 function phpblock_testimonials()
 {
-    global $_CONF, $_TABLES;
+    global $_CONF, $_TST_CONF, $_TABLES, $LANG_TSTM01;
 
     $retval = '';
 
@@ -666,13 +666,19 @@ function phpblock_testimonials()
         $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
         $T->set_file ('form','random_block.thtml');
 
+        $testimonialText = TST_truncate($A['text_full'],300,'');
+        $remaining       = trim(utf8_substr($A['text_full'],utf8_strlen($testimonialText)));
+
         $T->set_var(array(
             'testimonial_text'  => nl2br(TST_truncate($A['text_full'],300,'...')),
             'client_name'       => $A['clientname'],
             'submit_date'       => $A['tst_date'],
+            'testimonial_link'  => $_CONF['site_url'].'/testimonials/index.php?id='.$A['testid'],
+            'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
         ),false,true);
         if ( $A['company'] != '' ) $T->set_var('company_name',$A['company'],false,true);
         if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage'],false,true);
+        if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true,false,true);
 
         $T->parse('output', 'form');
         $retval .= $T->finish($T->get_var('output'));
