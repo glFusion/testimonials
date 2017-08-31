@@ -88,15 +88,18 @@ if ( !COM_isAnonUser() || $_TST_CONF['anonymous_submit'] == true ) {
     $T->set_var('lang_submit_testimonial',$LANG_TSTM01['submit_testimonial']);
 }
 
-
 $T->set_block('page','testimonials','tm');
 
 for ($i = 0; $i < $num; $i++) {
     $A = DB_fetchArray ($result);
 
-    $truncated = TST_truncate($A['text_full'], 500,'');
-    $remaining = utf8_substr($A['text_full'],utf8_strlen($truncated));
-
+    if ($tid == 0 ) {
+        $truncated = TST_truncate($A['text_full'], 500,'');
+        $remaining = utf8_substr($A['text_full'],utf8_strlen($truncated));
+    } else {
+        $truncated = $A['text_full'];
+        $remaining = "";
+    }
     $T->set_var(array(
         'testid'            => $A['testid'],
         'client'            => COM_highlightQuery($A['clientname'],$query),
