@@ -654,10 +654,8 @@ function phpblock_testimonials()
 
     $retval = '';
 
-    $randomSelect = "RAND(NOW()) ";
-
-    $sql = "SELECT testid,clientname,company,homepage,text_full
-					FROM {$_TABLES['testimonials']}
+    $sql = "SELECT testid,clientname,company,homepage,text_full,tst_date
+					FROM {$_TABLES['testimonials']} WHERE queued=0
 					ORDER BY RAND(NOW()) LIMIT 1";
 
     $result = DB_query($sql);
@@ -665,13 +663,19 @@ function phpblock_testimonials()
         $A = DB_fetchArray($result);
         $addhit = DB_query("update {$_TABLES['testimonials']} set views = views + 1 where testid = $A[testid]");
 
-    	$retval .= '<p>'.nl2br(TST_truncate($A['text_full'],300,'...')).'</p>';
-    	$retval .= '<p align="right">'.$A['clientname'].'<br>';
-    	if ( $A['homepage'] != "" )  {
-        	$retval .= '<a href="'.$A['homepage'].'" target="_blank">'.$A['company'].'</a></p>';
-        } else {
-            $retval .= $A['company'].'</p>';
-        }
+        $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
+        $T->set_file ('form','random_block.thtml');
+
+        $T->set_var(array(
+            'testimonial_text'  => nl2br(TST_truncate($A['text_full'],300,'...')),
+            'client_name'       => $A['clientname'],
+            'submit_date'       => $A['tst_date'],
+        ));
+        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company']);
+        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage']);
+
+        $T->parse('output', 'form');
+        $retval .= $T->finish($T->get_var('output'));
 	}
     return $retval;
 }

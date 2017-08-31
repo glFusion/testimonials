@@ -1,0 +1,13 @@
+<p>
+  {testimonial_text}
+</p>
+<p class="uk-text-right">
+  {client_name}
+{!if company_website}
+  <a href="{company_website}" target="_blank">
+{!endif}
+    <br>{company_name}
+{!if company_website}
+  </a>
+{!endif}
+</p>
