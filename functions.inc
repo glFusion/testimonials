@@ -203,9 +203,12 @@ function plugin_moderationapprove_testimonials($id)
     DB_query($sql);
 
     PLG_itemSaved($id,'testimonials');
-
     CACHE_remove_instance('menu');
-    COM_setMsg($LANG_TSTM01['submission_approved'],'warning');
+    COM_setMsg($LANG_TSTM01['submission_mod_approved'],'warning');
+
+	$email = DB_getItem($_TABLES['testimonials'],'email','testid='.(int) $id);
+	TST_notifyUser($email);
+
     return '';
 }
 
@@ -726,6 +729,58 @@ function TST_truncate($string, $length, $trimmarker = '') {
    $string = trim($string);
   }
  return $string;
+}
+
+function TST_notifyUser($email)
+{
+	global $_CONF, $_TST_CONF, $LANG_TSTM01;
+
+	if ( !COM_isEmail($email)) return;
+
+	$mailbody  = sprintf($LANG_TSTM01['submission_approved'],$_CONF['site_name']);
+	$msgData['htmlmessage'] 	= $mailbody;
+	$msgData['subject'] 		= $LANG_TSTM01['submission_approved_subject'];
+	$msgData['from']['email'] 	= $_CONF['noreply_mail'];
+	$msgData['from']['name'] 	= $_CONF['site_name'];
+	$msgData['to'] = array($email);
+	COM_emailNotification( $msgData );
+
+	return;
+}
+
+/**
+* Get an array of all groups this group belongs to.
+*
+* @param   basegroup   int     id of group
+* @return              array   array of all groups 'basegroup' belongs to
+*
+*/
+function TST_getGroupList ($basegroup)
+{
+    global $_TABLES;
+
+    $to_check = array ();
+    array_push ($to_check, $basegroup);
+
+    $checked = array ();
+
+    while (sizeof ($to_check) > 0) {
+        $thisgroup = array_pop ($to_check);
+        if ($thisgroup > 0) {
+            $result = DB_query ("SELECT ug_grp_id FROM {$_TABLES['group_assignments']} WHERE ug_main_grp_id = $thisgroup");
+            $numGroups = DB_numRows ($result);
+            for ($i = 0; $i < $numGroups; $i++) {
+                $A = DB_fetchArray ($result);
+                if (!in_array ($A['ug_grp_id'], $checked)) {
+                    if (!in_array ($A['ug_grp_id'], $to_check)) {
+                        array_push ($to_check, $A['ug_grp_id']);
+                    }
+                }
+            }
+            $checked[] = $thisgroup;
+        }
+    }
+    return $checked;
 }
 
 ?>
