@@ -25,6 +25,8 @@ if (!defined ('GVERSION')) {
 $tst_config = \config::get_instance();
 $_TST_CONF = $tst_config->get_config('testimonials');
 
+if ( !isset($_TST_CONF['disable_submissions'] ) ) $_TST_CONF['disable_submissions'] = false;
+
 /**
 * Language file Include
 */
@@ -595,6 +597,17 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
     }
 
     return $retval;
+}
+
+/**
+* Called by the plugin Editor to run the SQL Update for a plugin update
+*/
+function plugin_upgrade_testimonials() {
+    global $_CONF, $_TABLES,$_TST_CONF;
+
+    require_once $_CONF['path'] . 'plugins/testimonials/upgrade.php';
+
+    return testimonials_upgrade();
 }
 
 

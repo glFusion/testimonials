@@ -33,6 +33,7 @@ if (!isset($_TST_CONF) || empty($_TST_CONF)) {
 global $_TST_DEFAULTS;
 $_TST_DEFAULTS = array(
     'displayblocks'         => 0,
+    'disable_submissions'   => false,
     'anonymous_submit'      => false,
     'queue_submissions'     => true,
     'speedlimit'            => 300,
@@ -56,10 +57,11 @@ function plugin_initconfig_testimonials()
         $c->add('fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true,'testimonials');
 
         $c->add('displayblocks', $_TST_DEFAULTS['displayblocks'],'select', 0, 0, 1, 5, true, 'testimonials');
-        $c->add('anonymous_submit', $_TST_DEFAULTS['anonymous_submit'],'select', 0, 0, 2, 10, true, 'testimonials');
-        $c->add('queue_submissions', $_TST_DEFAULTS['queue_submissions'],'select', 0, 0, 0, 15, true, 'testimonials');
-        $c->add('speedlimit', $_TST_DEFAULTS['speedlimit'],'text', 0, 0, NULL, 20, true, 'testimonials');
-        $c->add('per_page', $_TST_DEFAULTS['per_page'],'text', 0, 0, NULL, 25, true, 'testimonials');
+        $c->add('disable_submissions', $_TST_DEFAULTS['disable_submissions'],'select', 0, 0, 0, 10, true, 'testimonials');
+        $c->add('anonymous_submit', $_TST_DEFAULTS['anonymous_submit'],'select', 0, 0, 2, 15, true, 'testimonials');
+        $c->add('queue_submissions', $_TST_DEFAULTS['queue_submissions'],'select', 0, 0, 0, 20, true, 'testimonials');
+        $c->add('speedlimit', $_TST_DEFAULTS['speedlimit'],'text', 0, 0, NULL, 25, true, 'testimonials');
+        $c->add('per_page', $_TST_DEFAULTS['per_page'],'text', 0, 0, NULL, 30, true, 'testimonials');
      }
      return true;
 }

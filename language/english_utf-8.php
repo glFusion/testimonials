@@ -90,6 +90,7 @@ $LANG_confignames['testimonials'] = array(
     'queue_submissions'     => 'Use Moderation Queue for User Submitted Testimonials',
     'speedlimit'            => 'Time user must wait between testimonial submissions (seconds)',
     'per_page'              => 'Number of Testimonails per page',
+    'disable_submissions'   => 'Disable Testimonial Submissions',
 );
 
 $LANG_configsubgroups['Testimonials'] = array(

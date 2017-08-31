@@ -6,7 +6,7 @@ For the latest, and more detailed, documentation, please see the [Testimonials P
 
 This is a plugin for glFusion that will allow you to showcase your testimonials.
 Site administrators can manually enter testimonials received via email or other
-methods. Users can also submit testimonials that optionally can be queued for 
+methods. Users can also submit testimonials that optionally can be queued for
 review prior to publishing.
 
 A Testimonial Block is included that will pull random testimonials to display
@@ -32,6 +32,10 @@ The upgrade process is identical to the installation process, simply upload the 
 **Display Blocks**
 
 Which glFusion blocks to display when viewing Testimonials. For example, left, right, none, both...
+
+**Disable Testimonial Submissions**
+
+If this is set to TRUE, all user submissions will be disabled. Only the Testimonial Admin can enter testimonials through the admin interface.
 
 **Allow Anonymous Users to Submit Testimonials**
 
