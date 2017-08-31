@@ -81,6 +81,7 @@ $T->set_var(array(
     'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
     'lang_more' => $LANG_TSTM01['more'],
     'lang_less' => $LANG_TSTM01['less'],
+    'lang_view_all' => $LANG_TSTM01['view_all'],
     'pagination' => $pagination,
 ));
 
@@ -99,6 +100,7 @@ for ($i = 0; $i < $num; $i++) {
     } else {
         $truncated = $A['text_full'];
         $remaining = "";
+        $T->set_var('single_testimonial',true);
     }
     $T->set_var(array(
         'testid'            => $A['testid'],

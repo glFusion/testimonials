@@ -5,6 +5,13 @@
 	<a class="uk-button uk-button-small uk-button-success uk-align-right" href="{site_url}/testimonials/submit.php">{lang_submit_testimonial}</a>
 {!endif}
 	<div style="clear:both;"></div>
+
+{!if single_testimonial}
+  <ul class="uk-breadcrumb">
+    <li><a href="{site_url}/testimonials/index.php">{lang_view_all}</a></li>
+  </ul>
+{!endif}
+
 	<!-- BEGIN testimonials -->
 	<div class="uk-panel uk-panel-box uk-margin">
 {!if text_remaining}
