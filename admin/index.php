@@ -170,6 +170,10 @@ function saveEntry()
 
     $company_url = $filter->sanitizeUrl($company_url);
 
+    if ( !validateDate($tst_date, $format = 'Y-m-d') ) {
+        $tst_date = date('Y-m-d');
+    }
+
     if ( $testid == 0 ) {
         $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date) "
                ." VALUES ("
@@ -290,6 +294,12 @@ function tst_admin_menu($action)
     );
 
     return $retval;
+}
+
+function validateDate($date, $format = 'Y-m-d H:i:s')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
 }
 
 $page = '';
