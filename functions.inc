@@ -670,9 +670,9 @@ function phpblock_testimonials()
             'testimonial_text'  => nl2br(TST_truncate($A['text_full'],300,'...')),
             'client_name'       => $A['clientname'],
             'submit_date'       => $A['tst_date'],
-        ));
-        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company']);
-        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage']);
+        ),false,true);
+        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company'],false,true);
+        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage'],false,true);
 
         $T->parse('output', 'form');
         $retval .= $T->finish($T->get_var('output'));
