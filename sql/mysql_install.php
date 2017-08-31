@@ -32,6 +32,7 @@ $_SQL['testimonials'] = "CREATE TABLE {$_TABLES['testimonials']} (
     views int(25) NOT NULL default '0',
     queued tinyint(3) NOT NULL default '0',
     owner_id mediumint(8) unsigned NOT NULL default '1',
+    email varchar(96) default NULL,
     PRIMARY KEY  (testid)
 ) ENGINE=MyISAM
 ";
