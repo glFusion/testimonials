@@ -59,7 +59,6 @@ switch( $_TST_CONF['displayblocks'] ) {
         break;
 }
 
-
 /**
 * Returns the items for this plugin that should appear on the main menu
 *
@@ -629,8 +628,8 @@ function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
             <div id="tstid'.$A['testid'].'" class="uk-modal">
                 <div class="uk-modal-dialog">
                     <a class="uk-modal-close uk-close"></a>
-                    <div class="uk-modal-header">
-                    '.$LANG_TSTM01['testimonial'].'
+                    <div class="uk-modal-header"><h2>
+                    '.$LANG_TSTM01['testimonial'].'</h2>
                     </div>
                     <div class=" testimonial" style="padding-top:10px;">
                     <blockquote>
