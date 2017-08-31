@@ -43,11 +43,11 @@ function listEntries()
     $retval = "";
 
     $header_arr = array(      # display 'text' and use table field 'field'
+            array('text' => $LANG_TSTM01['edit'],   'field' => 'testid', 'sort' => false, 'align' => 'center'),
             array('text' => $LANG_TSTM01['client'], 'field' => 'clientname', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['company'], 'field' => 'company', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['tstdate'], 'field' => 'tst_date', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['testimonial'], 'field' => 'text_full', 'sort' => false, 'align' => 'center'),
-            array('text' => $LANG_TSTM01['edit'],   'field' => 'testid', 'sort' => false, 'align' => 'center'),
     );
     $defsort_arr = array('field'     => 'tst_date',
                          'direction' => 'DESC');
@@ -73,10 +73,10 @@ function listEntries()
 
     $actions = '<input name="delsel" type="image" src="'
             . $_CONF['layout_url'] . '/images/admin/delete.' . $_IMAGE_TYPE
-            . '" style="vertical-align:bottom;" title="' . 'Delete Checked'
-            . '" onclick="return confirm(\'' . 'Delete Confirm Text' . '\');"'
+            . '" style="vertical-align:bottom;" title="' . $LANG_TSTM01['delete_checked']
+            . '" onclick="return confirm(\'' . $LANG_TSTM01['delete_confirm'] . '\');"'
             . ' value="x" '
-            . '/>&nbsp;' . 'Delete Selected Entries';
+            . '/>&nbsp;' . $LANG_TSTM01['delete_checked'];
 
     $option_arr = array('chkselect' => true,
             'chkfield' => 'id1',
@@ -160,6 +160,8 @@ function saveEntry()
     $company_url = COM_applyFilter($_POST['testurl']);
     $tst_date    = COM_applyFilter($_POST['tstdate']);
     $tst_full    = $_POST['text_full'];
+    $email       = COM_applyFilter($_POST['email']);
+    $owner_id    = COM_applyFilter($_POST['owner_id']);
 
     $filter = new sanitizer();
 
@@ -175,13 +177,15 @@ function saveEntry()
     }
 
     if ( $testid == 0 ) {
-        $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date) "
+        $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date,owner_id,email) "
                ." VALUES ("
                ."'".$filter->prepareForDB($text_full)."',"
                ."'".$filter->prepareForDB($client_name)."',"
                ."'".$filter->prepareForDB($company_name)."',"
                ."'".$filter->prepareForDB($company_url)."',"
-               ."'".$filter->prepareForDB($tst_date)."'"
+               ."'".$filter->prepareForDB($tst_date)."',"
+               . $filter->prepareForDB($owner_id).","
+               ."'".$filter->prepareForDB($email)."'"
                .");";
         $result = DB_query($sql);
         $testid = DB_insertId($result);
@@ -191,7 +195,9 @@ function saveEntry()
                ."clientname='".$filter->prepareForDB($client_name)."',"
                ."company='".$filter->prepareForDB($company_name)."',"
                ."homepage='".$filter->prepareForDB($company_url)."',"
-               ."tst_date='".$filter->prepareForDB($tst_date)."'"
+               ."tst_date='".$filter->prepareForDB($tst_date)."',"
+               ."owner_id=".(int) $owner_id.","
+               ."email='".$filter->prepareForDB($email)."'"
                ." WHERE testid=".(int) $testid;
         $result = DB_query($sql);
     }
@@ -209,7 +215,7 @@ function saveEntry()
 
 function editEntry($mode,$testid='')
 {
-    global $_CONF, $_TABLES, $LANG_TSTM01;
+    global $_CONF, $_USER, $_TABLES, $LANG_TSTM01;
 
     $retval = '';
     $display = '';
@@ -236,9 +242,13 @@ function editEntry($mode,$testid='')
         'src'               => $src,
         'sec_token'         => SEC_createToken(),
         'sec_token_name'    => CSRF_TOKEN,
+        'lang_fs_submitter' => $LANG_TSTM01['fs_submitter'],
+        'lang_fs_testimonial' => $LANG_TSTM01['fs_testimonial'],
+        'lang_email'        => $LANG_TSTM01['email'],
+        'lang_owner_id'     => $LANG_TSTM01['owner_id'],
     ));
 
-    if ($mode == 'edit') {
+    if ($mode == 'edit' && ($testid != "" || $testid != 0)) {
         $result = DB_query ("SELECT * FROM {$_TABLES['testimonials']} WHERE testid = ".(int) $testid);
         $A = DB_fetchArray($result);
     } else {
@@ -248,7 +258,12 @@ function editEntry($mode,$testid='')
         $A['homepage'] = '';
         $A['tst_date'] = '';
         $A['text_full']= '';
+        $A['email']     = $_USER['email'];
+        $A['owner_id']  = $_USER['uid'];
     }
+
+    $user_select= COM_optionList($_TABLES['users'], 'uid,username',$A['owner_id']);
+
     $T->set_var(array(
         'row_testid'    => $A['testid'],
         'row_client'    => $A['clientname'],
@@ -256,6 +271,8 @@ function editEntry($mode,$testid='')
         'row_testurl'   => $A['homepage'],
         'row_tstdate'   => $A['tst_date'],
         'row_text_full' => $A['text_full'],
+        'row_email'     => $A['email'],
+        'user_select'   => $user_select,
     ));
 /* ---
     if (!empty($testid) && SEC_hasRights('testimonials.admin')) {
