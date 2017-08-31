@@ -275,7 +275,6 @@ function plugin_itemlist_testimonials($token)
         $data_arr[$i] = $A;     // push row data into array
     }
 
-//@TODO translation
     $header_arr = array(      // display 'text' and use table field 'field'
         array('text' => $LANG_ADMIN['edit'], 'field' => 'testid', 'align' => 'center', 'width' => '25px'),
         array('text' => $LANG_TSTM01['client'], 'field' => 'clientname'),
@@ -630,7 +629,19 @@ function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
             <div id="tstid'.$A['testid'].'" class="uk-modal">
                 <div class="uk-modal-dialog">
                     <a class="uk-modal-close uk-close"></a>
+                    <div class="uk-modal-header">
+                    '.$LANG_TSTM01['testimonial'].'
+                    </div>
+                    <div class=" testimonial" style="padding-top:10px;">
+                    <blockquote>
                     '.nl2br($A['text_full']).'
+                    </blockquote>
+                    <footer>
+                    <cite>
+                    '.$A['clientname'].'<br>'.$A['company'].'<br>'.$A['homepage'].'
+                    </cite>
+                    </footer>
+                    </div>
                 </div>
             </div>
             ';
