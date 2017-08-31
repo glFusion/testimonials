@@ -783,4 +783,57 @@ function TST_getGroupList ($basegroup)
     return $checked;
 }
 
+function testimonials_slider()
+{
+	global $_CONF, $_TST_CONF, $_TABLES;
+
+	$slideCounter = 0;
+
+	$T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
+
+	$T->set_file (array (
+		'page' => 'testimonial_slider.thtml',
+	));
+
+	$sql = "SELECT testid,clientname,company,text_full,homepage "
+		   ."FROM {$_TABLES['testimonials']} WHERE queued=0 "
+		   ."ORDER BY tst_date, testid DESC "
+		   ."LIMIT 20";
+
+	$result = DB_query ($sql);
+	$num = DB_numRows ($result);
+
+	if ( $num === 0 ) return;
+
+	$T->set_block('page','testimonials','tm');
+	$T->set_block('page','dotnav','dn');
+
+	for ($i = 0; $i < $num; $i++) {
+		$A = DB_fetchArray ($result);
+
+		$truncated = TST_truncate($A['text_full'], 700,'...');
+
+		$T->set_var(array(
+			'testid'            => $A['testid'],
+			'client'            => $A['clientname'],
+			'text_truncated'    => nl2br($truncated),
+			'company_name'      => $A['company'],
+		));
+		if ( $A['homepage'] != '' ) {
+			$T->set_var('company_url',$A['homepage']);
+		} else {
+			$T->unset_var('company_url');
+		}
+		$T->set_var('slidecounter',$slideCounter);
+		$T->parse('tm','testimonials',true);
+		$T->parse('dn','dotnav',true);
+		$slideCounter++;
+	}
+
+	$T->parse('output', 'page');
+	$page = $T->finish($T->get_var('output'));
+
+	return $page;
+}
+
 ?>

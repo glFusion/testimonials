@@ -1,0 +1,43 @@
+
+<div class="uk-slidenav-position uk-margin-bottom"
+	data-uk-slideshow="{animation: 'fade',duration: 500,height: 'auto',start: 0,autoplay: true,pauseOnHover: false,autoplayInterval: 5000,videoautoplay: true,videomute: true,kenburns: false}">
+
+	<ul class="uk-slideshow uk-overlay-active" data-uk-slideshow>
+		<!-- BEGIN testimonials -->
+		<li>
+			<img src="{site_url}/testimonials/images/background.jpg" width="" height="" alt="">
+
+			<div class="uk-overlay-panel uk-overlay-background uk-overlay-fade uk-flex uk-flex-center uk-flex-middle uk-text-center">
+				<div class="uk-container testimonial-slider" style="overflow:none;">
+					<blockquote>
+						{text_truncated}
+					</blockquote>
+					<footer>
+						<cite>
+{!if company_url}
+							<a href="{company_url}" target="_blank">{client}{!if company_name} :: {company_name}{!endif}</a>
+{!else}
+							{client}{!if company_name} :: {company_name}{!endif}
+{!endif}
+						</cite>
+					</footer>
+				</div>
+			</div>
+		</li>
+		<!-- END testimonials -->
+	</ul>
+
+
+	<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slideshow-item="previous"></a>
+	<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slideshow-item="next"></a>
+
+	<ul class="uk-dotnav uk-dotnav-contrast uk-position-bottom uk-flex-center">
+	<!-- BEGIN dotnav -->
+		<li data-uk-slideshow-item="{slidecounter}">
+			<a href="#"></a>
+		</li>
+	<!-- END dotnav -->
+	</ul>
+</div>
+
+
