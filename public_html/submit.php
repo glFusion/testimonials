@@ -29,7 +29,8 @@ function submitEntry( $A = array() )
     $last = 0;
     $last = COM_checkSpeedlimit ('testimonials');
     if ($last > 0) {
-        COM_setMsg('You must wait ' . (int) ($_TST_CONF['speedlimit'] / 60) . ' minutes between testimonial submissions.','error' );
+        $slMsg = sprintf($LANG_TSTM01['speedlimit_msg'], (int) ($_TST_CONF['speedlimit'] / 60));
+        COM_setMsg($slMsg,'error' );
         COM_refresh($_CONF['site_url'].'/testimonials/index.php');
     }
 
@@ -140,7 +141,7 @@ function saveSubmission()
     CACHE_remove_instance('menu');
 
     if ( $queue ) {
-        COM_setMsg( $LANG_TSTM01['testimonial_submitted'], 'error' );
+        COM_setMsg( $LANG_TSTM01['testimonial_submitted'], 'warning' );
     } else {
         COM_setMsg( $LANG_TSTM01['saved_success'],'warning');
     }
@@ -170,7 +171,6 @@ if ( COM_isAnonUser() && $_TST_CONF['anonymous_submit'] == false ) {
             if (SEC_checkToken()) {
                 $page = saveSubmission();
             }
-
 
         default :
             COM_refresh($_CONF['site_url'].'/testimonials/index.php');
