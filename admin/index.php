@@ -44,6 +44,7 @@ function listEntries()
 
     $header_arr = array(      # display 'text' and use table field 'field'
             array('text' => $LANG_TSTM01['edit'],   'field' => 'testid', 'sort' => false, 'align' => 'center'),
+            array('text' => $LANG_TSTM01['published'],   'field' => 'queued', 'sort' => false, 'align' => 'center'),
             array('text' => $LANG_TSTM01['client'], 'field' => 'clientname', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['company'], 'field' => 'company', 'sort' => true, 'align' => 'left'),
             array('text' => $LANG_TSTM01['tstdate'], 'field' => 'tst_date', 'sort' => true, 'align' => 'left'),
@@ -60,7 +61,7 @@ function listEntries()
             'no_data'       => $LANG_TSTM01['no_testimonials'],
     );
 
-    $sql = "SELECT testid AS id1,testid,clientname,company,tst_date,text_full,views "
+    $sql = "SELECT testid AS id1,testid,clientname,company,tst_date,text_full,views,queued "
             . "FROM {$_TABLES['testimonials']} ";
 
     $query_arr = array('table' => 'testimonials',
@@ -69,7 +70,7 @@ function listEntries()
                         'default_filter' => " WHERE 1=1 ",
                         'group_by' => "");
 
-    $filter = "";
+    $filter = '';
 
     $actions = '<input name="delsel" type="image" src="'
             . $_CONF['layout_url'] . '/images/admin/delete.' . $_IMAGE_TYPE
@@ -123,6 +124,13 @@ function TST_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
             $retval = '<a class="'.COM_getToolTipStyle().'" title="' . htmlspecialchars($A['text_full']).'"><i class="uk-icon uk-icon-info-circle"></i></a>';
             break;
 
+        case 'queued' :
+            if ( $fieldvalue != 0 ) {
+                $retval = '<i class="uk-icon uk-icon-times uk-text-danger"></i>';
+            } else {
+                $retval = '<i class="uk-icon uk-icon-check-circle uk-text-success"></i>';
+            }
+            break;
         default:
             $retval = $fieldvalue;
             break;
@@ -162,6 +170,7 @@ function saveEntry()
     $tst_full    = $_POST['text_full'];
     $email       = COM_applyFilter($_POST['email']);
     $owner_id    = COM_applyFilter($_POST['owner_id']);
+    $queued      = (isset($_POST['queued']) ? 1 : 0);
 
     $filter = new sanitizer();
 
@@ -177,7 +186,7 @@ function saveEntry()
     }
 
     if ( $testid == 0 ) {
-        $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date,owner_id,email) "
+        $sql = "INSERT INTO {$_TABLES['testimonials']} (text_full,clientname,company,homepage,tst_date,owner_id,email,queued) "
                ." VALUES ("
                ."'".$filter->prepareForDB($text_full)."',"
                ."'".$filter->prepareForDB($client_name)."',"
@@ -185,7 +194,8 @@ function saveEntry()
                ."'".$filter->prepareForDB($company_url)."',"
                ."'".$filter->prepareForDB($tst_date)."',"
                . $filter->prepareForDB($owner_id).","
-               ."'".$filter->prepareForDB($email)."'"
+               ."'".$filter->prepareForDB($email)."',"
+               .(int) $queued
                .");";
         $result = DB_query($sql);
         $testid = DB_insertId($result);
@@ -197,11 +207,16 @@ function saveEntry()
                ."homepage='".$filter->prepareForDB($company_url)."',"
                ."tst_date='".$filter->prepareForDB($tst_date)."',"
                ."owner_id=".(int) $owner_id.","
-               ."email='".$filter->prepareForDB($email)."'"
+               ."email='".$filter->prepareForDB($email)."',"
+               ."queued=".(int) $queued
                ." WHERE testid=".(int) $testid;
         $result = DB_query($sql);
     }
-    PLG_itemSaved($testid,'testimonials');
+    if ( $queued ) {
+        PLG_itemDeleted($testid,'testimonials');
+    } else {
+        PLG_itemSaved($testid,'testimonials');
+    }
     COM_setMsg( $LANG_TSTM01['saved_success'], 'warning' );
     CACHE_remove_instance('menu');
     $src = 'adm';
@@ -246,6 +261,8 @@ function editEntry($mode,$testid='')
         'lang_fs_testimonial' => $LANG_TSTM01['fs_testimonial'],
         'lang_email'        => $LANG_TSTM01['email'],
         'lang_owner_id'     => $LANG_TSTM01['owner_id'],
+        'lang_word_count'   => $LANG_TSTM01['word_count'],
+        'lang_in_queue'     => $LANG_TSTM01['in_queue'],
     ));
 
     if ($mode == 'edit' && ($testid != "" || $testid != 0)) {
@@ -258,11 +275,16 @@ function editEntry($mode,$testid='')
         $A['homepage'] = '';
         $A['tst_date'] = '';
         $A['text_full']= '';
+        $A['queued'] = 0;
         $A['email']     = $_USER['email'];
         $A['owner_id']  = $_USER['uid'];
     }
 
     $user_select= COM_optionList($_TABLES['users'], 'uid,username',$A['owner_id']);
+    $queueChecked = '';
+    if ( $A['queued'] ) {
+        $queueChecked = ' checked="checked" ';
+    }
 
     $T->set_var(array(
         'row_testid'    => $A['testid'],
@@ -272,6 +294,7 @@ function editEntry($mode,$testid='')
         'row_tstdate'   => $A['tst_date'],
         'row_text_full' => $A['text_full'],
         'row_email'     => $A['email'],
+        'queued_checked'=> $queueChecked,
         'user_select'   => $user_select,
     ));
 /* ---
@@ -297,8 +320,9 @@ function tst_admin_menu($action)
     $retval = '';
 
     $menu_arr = array(
-        array( 'url' => $_CONF['site_admin_url'].'/plugins/testimonials/index.php?list=x','text' => 'Testimonials','active' => ($action == 'list' ? true : false)),
-        array( 'url' => $_CONF['site_admin_url'].'/plugins/testimonials/index.php?edit=x','text'=> $LANG_TSTM01['create_new'], 'active'=> ($action == 'edit' ? true : false)),
+        array( 'url' => $_CONF['site_admin_url'].'/plugins/testimonials/index.php?list=x','text' => $LANG_TSTM01['plugin_admin'],'active' => ($action == 'list' ? true : false)),
+        array( 'url' => $_CONF['site_admin_url'].'/plugins/testimonials/index.php?edit=x','text'=> ($action == 'edit_existing' ? $LANG_TSTM01['edit'] : $LANG_TSTM01['create_new']), 'active'=> ($action == 'edit' || $action == 'edit_existing' ? true : false)),
+        array( 'url' => $_CONF['site_url'].'/testimonials/index.php','text'=> 'Testimonials Page', 'active'=> false),
         array( 'url' => $_CONF['site_admin_url'], 'text' => $LANG_ADMIN['admin_home'])
     );
 
@@ -343,6 +367,7 @@ switch ( $cmd ) {
             $page = editEntry ($cmd);
         } else {
             $page = editEntry ($cmd, (int) COM_applyFilter ($_GET['testid']));
+            $cmd = 'edit_existing';
         }
         break;
     case 'save' :
