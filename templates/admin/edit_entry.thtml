@@ -18,7 +18,7 @@
     <div class="uk-form-row">
       <label class="uk-form-label">{lang_email}</label>
       <div class="uk-form-controls">
-        <input class="required email" type="text" name="email" size="30" value="{row_email}">
+        <input class="email" type="text" name="email" size="30" value="{row_email}">
       </div>
     </div>
   </fieldset>
@@ -60,11 +60,21 @@
     <div class="uk-form-row">
       <label class="uk-form-label">
       	{testa_text_full}
+        <div class="uk-text-muted">{text_full_help}</div>
       </label>
       <div class="uk-form-controls">
-        <textarea class="uk-form-width-large required" name="text_full" rows="12" cols="90">{row_text_full}</textarea>
-        <span class="uk-form-help-inline">{text_help}</span>
+        <textarea class="uk-form-width-large required" id="text_full" name="text_full" rows="12" cols="90">{row_text_full}</textarea>
+	      <div id="result">{lang_word_count}: 0</div>
       </div>
+    </div>
+
+    <div class="uk-form-row">
+    	<label class="uk-form-label">
+    		{lang_in_queue}
+    	</label>
+    	<div class="uk-form-controls">
+    		<input type="checkbox" name="queued" id="queued" {queued_checked}>
+    	</div>
     </div>
 
   </fieldset>
@@ -83,6 +93,28 @@
 </form>
 
 <script>
+function wordCount( val ){
+	var wom = val.match(/\S+/g);
+	return {
+		words : wom ? wom.length : 0,
+	};
+}
+function countWords( val ) {
+  var v = wordCount(val);
+	result.innerHTML = (
+	"{lang_word_count}: "+ v.words
+	);
+}
+var Textarea = document.getElementById("text_full");
+var result   = document.getElementById("result");
+Textarea.addEventListener("input", function(){
+	countWords(this.value);
+}, false);
+
+$( document ).ready(function() {
+	var val = $("#text_full").val();
+	countWords(val);
+});
 $( "#testimonialadmin" ).validate({
 	errorElement: "div",
 	errorClass: "uk-text-danger",
