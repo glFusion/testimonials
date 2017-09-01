@@ -669,6 +669,19 @@ function plugin_chkVersion_testimonials()
 }
 
 /**
+*   Determine if current user is a moderator
+*
+*   @return string  version number
+*/
+function plugin_ismoderator_testimonials()
+{
+    global $_CONF, $_USER;
+
+    if ( SEC_hasRights('testimonials.admin') ) return true;
+    return false;
+}
+
+/**
 * Returns data for the random
 *
 * block for the Testimonials plugin
