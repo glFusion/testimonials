@@ -101,7 +101,7 @@ function submitEntry( $A = array(), $errors = array() )
 
 function saveSubmission()
 {
-    global $_CONF, $_TST_CONF, $_USER, $_TABLES, $LANG_TSTM01, $LANG_TST_ERRORS;
+    global $_CONF, $_TST_CONF, $_USER, $_TABLES, $LANG_TSTM01, $LANG_TST_ERRORS,$REMOTE_ADDR;
 
     $errors = array();
 
@@ -140,6 +140,25 @@ function saveSubmission()
 
     if ( utf8_strlen(trim($A['text_full'])) === 0 ) {
         $errors[] = $LANG_TST_ERRORS['invalid_testimonial'];
+    }
+
+    // Let plugins have a chance to check for spam
+    $spamCheckText = $filter->Linkify($A['text_full']);
+    $spamcheck = '<h1>' . $A['company'] . '</h1><p>' . $spamCheckText . '</p>';
+    $result = PLG_checkforSpam ($spamcheck, $_CONF['spamx']);
+    // Now check the result and display message if spam action was taken
+    if ($result > 0) {
+        $errors[] = $LANG_TSTM01['spam_identified'];
+    }
+    if ( COM_isAnonUser() && function_exists('plugin_itemPreSave_spamx')) {
+       $spamCheckData = array(
+            'email'     => $A['email'],
+            'ip'        => $REMOTE_ADDR);
+
+        $msg = plugin_itemPreSave_spamx('testimonials',$spamCheckData);
+        if ( $msg ) {
+            $errors[] = $msg;
+        }
     }
 
     if ( count($errors) > 0 ) {

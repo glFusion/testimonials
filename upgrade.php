@@ -38,6 +38,7 @@ function testimonials_upgrade()
             DB_query("ALTER TABLE {$_TABLES['testimonials']} ADD email VARCHAR(96) NULL DEFAULT NULL AFTER owner_id",1);
 
         case '0.4.0' :
+        case '0.4.5' :
             // no changes in DB / config structure
 
         default:

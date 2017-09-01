@@ -73,14 +73,22 @@ function wordCount( val ){
 		words : wom ? wom.length : 0,
 	};
 }
-var Textarea = document.getElementById("text_full");
-var result   = document.getElementById("result");
-Textarea.addEventListener("input", function(){
-	var v = wordCount( this.value );
+function countWords( val ) {
+  var v = wordCount(val);
 	result.innerHTML = (
 	"{lang_word_count}: "+ v.words
 	);
+}
+var Textarea = document.getElementById("text_full");
+var result   = document.getElementById("result");
+Textarea.addEventListener("input", function(){
+	countWords(this.value);
 }, false);
+
+$( document ).ready(function() {
+	var val = $("#text_full").val();
+	countWords(val);
+});
 
 $( "#testimonialinput" ).validate({
 	errorElement: "div",

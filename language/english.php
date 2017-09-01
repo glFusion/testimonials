@@ -59,6 +59,7 @@ $LANG_TSTM01 = array (
     'read_full_testimonial'  => 'Read Full Testimonial',
     'save'				=> 'Save',
     'saved_success'     => 'Testimonial successfully saved.',
+    'spam_identified'   => 'Your testimonial failed our spam checks. This could be caused by too many URLs in the testimonial, or if you email or IP address appear on our Spam Block Blacklist. If the problem persists, please contact the site administrator for assistance.',
     'speedlimit_msg'    => 'You must wait %d minutes between testimonial submissions.',
     'submission_mod_approved' => 'Testimonial Submission has been approved',
     'submission_approved' => 'Thank you for your testimonial submitted at %s. Your submission has been approved. We appreciate your feedback!',
