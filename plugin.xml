@@ -2,8 +2,8 @@
     <id>testimonials</id>
     <name>Testimonials</name>
     <description>Allows customers to provide feedback</description>
-    <version>0.5.0</version>
-    <glfusionversion>1.6.0</glfusionversion>
+    <version>0.6.0</version>
+    <glfusionversion>1.7.0</glfusionversion>
     <phpversion>5.3.3</phpversion>
     <url>https://www.glfusion.org</url>
     <maintainer>Mark R. Evans</maintainer>

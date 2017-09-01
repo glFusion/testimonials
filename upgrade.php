@@ -39,6 +39,7 @@ function testimonials_upgrade()
 
         case '0.4.0' :
         case '0.4.5' :
+        case '0.5.0' :
             // no changes in DB / config structure
 
         default:

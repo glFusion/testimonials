@@ -29,7 +29,7 @@ The Testimonials plugin offers several advanced features:
 The Testimonials Plugin has the following system requirements:
 
 * PHP 5.3.3 and higher.
-* glFusion v1.6.0 or newer
+* glFusion v1.7.0 or newer
 * Must be using a UIKIT based theme - will not work with Vintage or Nouveau themes
 
 ### Installation
