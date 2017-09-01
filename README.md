@@ -22,7 +22,7 @@ The Testimonials plugin offers several advanced features:
  * Email notification to moderators on new submissions
  * Email notification to user when testimonial is approved
  * Modern user interface for displaying testimonials - automatically trims long testimonials with More / Hide button to toggle viewing full testimonial
-* Random block to automatically display testimonials  
+* Random block to automatically display testimonials
 
 ### System Requirements
 
@@ -30,6 +30,7 @@ The Testimonials Plugin has the following system requirements:
 
 * PHP 5.3.3 and higher.
 * glFusion v1.6.0 or newer
+* Must be using a UIKIT based theme - will not work with Vintage or Nouveau themes
 
 ### Installation
 
