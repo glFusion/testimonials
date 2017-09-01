@@ -37,6 +37,9 @@ function testimonials_upgrade()
         case '0.3.0' :
             DB_query("ALTER TABLE {$_TABLES['testimonials']} ADD email VARCHAR(96) NULL DEFAULT NULL AFTER owner_id",1);
 
+        case '0.4.0' :
+            // no changes in DB / config structure
+
         default:
             DB_query("UPDATE {$_TABLES['plugins']} SET pi_version='".$_TST_CONF['pi_version']."',pi_gl_version='".$_TST_CONF['gl_version']."' WHERE pi_name='testimonials' LIMIT 1");
             break;
