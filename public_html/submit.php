@@ -22,6 +22,8 @@ function submitEntry( $A = array(), $errors = array() )
 {
     global $_CONF, $_TST_CONF, $_USER, $_TABLES, $LANG_TSTM01;
 
+    if ( SEC_hasRights('testimonials.admin')) COM_refresh($_CONF['site_admin_url'].'/plugins/testimonials/index.php?edit=x');
+
     $retval = '';
     $display = '';
 
@@ -62,6 +64,7 @@ function submitEntry( $A = array(), $errors = array() )
         'lang_word_count'   => $LANG_TSTM01['word_count'],
         'lang_email'        => $LANG_TSTM01['email'],
         'lang_email_help'   => $LANG_TSTM01['email_help'],
+        'lang_text_help'    => $LANG_TSTM01['text_full_help'],
     ));
 
     if ( COM_isAnonUser() || $_USER['email'] == '' ) $T->set_var('anonymous_user',true);
@@ -104,6 +107,7 @@ function saveSubmission()
 
     if (!COM_isAnonUser() ) {
         $A['owner_id'] = $_USER['uid'];
+        $A['email'] = $_USER['email'];
     } else {
         $A['owner_id'] = 1;
     }
