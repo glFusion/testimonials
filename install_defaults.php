@@ -38,6 +38,7 @@ $_TST_DEFAULTS = array(
     'queue_submissions'     => true,
     'speedlimit'            => 300,
     'per_page'              => 15,
+    'centerblock_where'     => -1,
 );
 
 /**
@@ -62,6 +63,7 @@ function plugin_initconfig_testimonials()
         $c->add('queue_submissions', $_TST_DEFAULTS['queue_submissions'],'select', 0, 0, 0, 20, true, 'testimonials');
         $c->add('speedlimit', $_TST_DEFAULTS['speedlimit'],'text', 0, 0, NULL, 25, true, 'testimonials');
         $c->add('per_page', $_TST_DEFAULTS['per_page'],'text', 0, 0, NULL, 30, true, 'testimonials');
+        $c->add('centerblock_where', $_TST_DEFAULTS['per_page'],'select', 0, 0, 3, 40, true, 'testimonials');
      }
      return true;
 }

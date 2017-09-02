@@ -100,6 +100,8 @@ $LANG_confignames['testimonials'] = array(
     'speedlimit'            => 'Time user must wait between testimonial submissions (seconds)',
     'per_page'              => 'Number of Testimonails per page',
     'disable_submissions'   => 'Disable Testimonial Submissions',
+    'centerblock_where'     => 'Enable Testimonials Centerblock',
+
 );
 
 $LANG_configsubgroups['Testimonials'] = array(
@@ -114,6 +116,7 @@ $LANG_configselects['testimonials'] = array(
     0  => array('True' => 1, 'False' => 0 ),
     1  => array('Left Blocks' => 0, 'Right Blocks' => 1, 'All Blocks' => 2, 'No Blocks' => 3),
     2  => array('Yes' => 1, 'No' => 0 ),
+    3 => array('No Centerblock' => -1, 'Top of Page' => 1, 'After Featured Story' => 2, 'Bottom of Page' => 3),
 );
 
 ?>

@@ -26,6 +26,7 @@ $tst_config = \config::get_instance();
 $_TST_CONF = $tst_config->get_config('testimonials');
 
 if ( !isset($_TST_CONF['disable_submissions'] ) ) $_TST_CONF['disable_submissions'] = false;
+if ( !isset($_TST_CONF['centerblock_where'] ) ) $_TST_CONF['centerblock_where'] = -1;
 
 /**
 * Language file Include
@@ -609,6 +610,58 @@ function plugin_upgrade_testimonials() {
     require_once $_CONF['path'] . 'plugins/testimonials/upgrade.php';
 
     return testimonials_upgrade();
+}
+
+
+/**
+* Display Testimonials Center block
+*
+* @param   where   int      where the block will be displayed (0..2)
+* @param   page    int      page number
+* @param   topic   string   topic ID
+* @return          string   HTML for the center blcok (can be empty)
+*/
+function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
+{
+    global $_CONF, $_USER, $_TABLES, $_TST_CONF, $LANG_TSTM01;
+
+    if ( $_TST_CONF['centerblock_where'] != $where && $where != CENTERBLOCK_FORCE) {
+        return;
+    }
+
+    $retval = '';
+
+    $sql = "SELECT testid,clientname,company,homepage,text_full,tst_date
+					FROM {$_TABLES['testimonials']} WHERE queued=0
+					ORDER BY RAND(NOW()) LIMIT 1";
+
+    $result = DB_query($sql);
+    if (DB_numRows($result) == 1 ) {
+        $A = DB_fetchArray($result);
+        $addhit = DB_query("update {$_TABLES['testimonials']} set views = views + 1 where testid = $A[testid]");
+
+        $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
+        $T->set_file ('form','centerblock.thtml');
+
+        $testimonialText = TST_truncate($A['text_full'],300,'');
+        $remaining       = trim(utf8_substr($A['text_full'],utf8_strlen($testimonialText)));
+
+        $T->set_var(array(
+            'testimonial_text'  => nl2br(TST_truncate($A['text_full'],500,'...')),
+            'client_name'       => $A['clientname'],
+            'submit_date'       => $A['tst_date'],
+            'testimonial_link'  => $_CONF['site_url'].'/testimonials/index.php?id='.$A['testid'],
+            'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
+            'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
+        ),false,true);
+        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company'],false,true);
+        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage'],false,true);
+        if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true,false,true);
+
+        $T->parse('output', 'form');
+        $retval .= $T->finish($T->get_var('output'));
+	}
+    return $retval;
 }
 
 

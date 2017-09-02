@@ -41,6 +41,9 @@ function testimonials_upgrade()
         case '0.4.5' :
         case '0.5.0' :
             // no changes in DB / config structure
+        case '0.6.0' :
+            $c = config::get_instance();
+            $c->add('centerblock_where', -1,'select', 0, 0, 3, 40, true, 'testimonials');
 
         default:
             DB_query("UPDATE {$_TABLES['plugins']} SET pi_version='".$_TST_CONF['pi_version']."',pi_gl_version='".$_TST_CONF['gl_version']."' WHERE pi_name='testimonials' LIMIT 1");
