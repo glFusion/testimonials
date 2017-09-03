@@ -22,7 +22,8 @@ The Testimonials plugin offers several advanced features:
  * Email notification to moderators on new submissions
  * Email notification to user when testimonial is approved
  * Modern user interface for displaying testimonials - automatically trims long testimonials with More / Hide button to toggle viewing full testimonial
-* Random block to automatically display testimonials
+ * Random block to automatically display testimonials
+ * glFusion Centerblock support to showcase your testimonials
 
 ### System Requirements
 
@@ -65,6 +66,10 @@ The amount of time (in seconds) that a user must wait before submitting a new te
 **Number of Testimonials Per Page**
 
 The number of testimonials to display per page.
+
+**Enable Center Block**
+
+Select whether to enable the Centerblock and where it should be displayed. The Centerblock will display a single random testimonial each time the index page is displayed.
 
 ### License
 
