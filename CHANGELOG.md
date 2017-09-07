@@ -1,6 +1,7 @@
 Testimonials Plugin ChangeLog
 
 ## v1.0.0
+  - CAPTCHA Support
   - Configuration options
   - Added pagination to testimonals list view
   - Added speedlimit checking

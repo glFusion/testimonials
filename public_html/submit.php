@@ -89,6 +89,13 @@ function submitEntry( $A = array(), $errors = array() )
         'row_email'     => $A['email'],
     ));
 
+    if ( COM_isAnonUser() && function_exists('plugin_templatesetvars_captcha') ) {
+        $captcha = plugin_templatesetvars_captcha('general', $T);
+        $T->set_var('captcha',$captcha);
+    } else {
+        $T->set_var ('captcha','');
+    }
+
     $errorMessage = '';
     if ( count($errors) > 0 ) {
         $errorMessage = implode("<br>",$errors);
@@ -142,6 +149,17 @@ function saveSubmission()
         $errors[] = $LANG_TST_ERRORS['invalid_testimonial'];
     }
 
+    if ( COM_isAnonUser() ) {
+        if ( function_exists('plugin_itemPreSave_captcha') && count($errors) == 0 ) {
+            if ( !isset($_POST['captcha']) ) {
+                $_POST['captcha'] = '';
+            }
+            $msg = plugin_itemPreSave_captcha('general',$_POST['captcha']);
+            if ( $msg != '' ) {
+                $errors[] = $msg;
+            }
+        }
+    }
     // Let plugins have a chance to check for spam
     $spamCheckText = $filter->Linkify($A['text_full']);
     $spamcheck = '<h1>' . $A['company'] . '</h1><p>' . $spamCheckText . '</p>';
