@@ -284,6 +284,8 @@ function plugin_itemlist_testimonials($token)
         array('text' => $LANG_TSTM01['company'], 'field' => 'company'),
         array('text' => $LANG_TSTM01['tstdate'], 'field' => 'tst_date', 'align' => 'center', 'width' => '15%'),
         array('text' => $LANG_TSTM01['testimonial'],'field'=>'text_full'),
+        array('text' => $LANG29[1], 'field' => 'approve', 'align' => 'center', 'width' => '35px'),
+        array('text' => $LANG_ADMIN['delete'], 'field' => 'delete', 'align' => 'center', 'width' => '35px')
     );
 
     $text_arr = array('has_menu'    => false,
@@ -667,7 +669,7 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
 
 function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
 {
-    global $_CONF, $LANG_TSTM01;
+    global $_CONF, $LANG_TSTM01, $LANG_ADMIN, $LANG29;
 
     $retval = '';
 
@@ -679,15 +681,9 @@ function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
             break;
         case 'text_full' :
             $retval = '
-
-            <button type="button" class="uk-button uk-button-success" data-uk-modal="{target:\'#tstid'.$A['testid'].'\'}">'.$LANG_TSTM01['testimonial'].'</button>
-            <div id="tstid'.$A['testid'].'" class="uk-modal">
-                <div class="uk-modal-dialog">
-                    <a class="uk-modal-close uk-close"></a>
-                    <div class="uk-modal-header"><h2>
-                    '.$LANG_TSTM01['testimonial'].'</h2>
-                    </div>
-                    <div class=" testimonial" style="padding-top:10px;">
+            <a href="#tstid'.$A['testid'].'" rel="modal:open">'.$LANG_ADMIN['preview'].'</a>
+            <div id="tstid'.$A['testid'].'" style="display:none;">
+                <div class=" testimonial" style="padding-top:10px;">
                     <blockquote>
                     '.nl2br($A['text_full']).'
                     </blockquote>
@@ -696,10 +692,33 @@ function _tstm_getListField($fieldname, $fieldvalue, $A, $icon_arr, $token = "")
                     '.$A['clientname'].'<br>'.$A['company'].'<br>'.$A['homepage'].'
                     </cite>
                     </footer>
-                    </div>
                 </div>
             </div>
             ';
+            break;
+
+        case 'approve':
+            $retval = '';
+            $attr['title'] = $LANG29[1];
+            $attr['onclick'] = 'return confirm(\'' . $LANG29[48] . '\');';
+            $retval .= COM_createLink($icon_arr['accept'],
+                $_CONF['site_admin_url'] . '/moderation.php'
+                . '?approve=x'
+                . '&amp;type=' . $A['_type_']
+                . '&amp;id=' . $A[0]
+                . '&amp;' . CSRF_TOKEN . '=' . $token, $attr);
+            break;
+
+        case 'delete':
+            $retval = '';
+            $attr['title'] = $LANG_ADMIN['delete'];
+            $attr['onclick'] = 'return confirm(\'' . $LANG29[49] . '\');';
+            $retval .= COM_createLink($icon_arr['delete'],
+                $_CONF['site_admin_url'] . '/moderation.php'
+                . '?delete=x'
+                . '&amp;type=' . $A['_type_']
+                . '&amp;id=' . $A[0]
+                . '&amp;' . CSRF_TOKEN . '=' . $token, $attr);
             break;
 
         default :
