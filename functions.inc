@@ -283,7 +283,7 @@ function plugin_itemlist_testimonials($token)
         array('text' => $LANG_TSTM01['client'], 'field' => 'clientname'),
         array('text' => $LANG_TSTM01['company'], 'field' => 'company'),
         array('text' => $LANG_TSTM01['tstdate'], 'field' => 'tst_date', 'align' => 'center', 'width' => '15%'),
-        array('text' => $LANG_TSTM01['testimonial'],'field'=>'text_full'),
+        array('text' => $LANG_TSTM01['testimonial'],'field'=>'text_full','align' => 'center'),
         array('text' => $LANG29[1], 'field' => 'approve', 'align' => 'center', 'width' => '35px'),
         array('text' => $LANG_ADMIN['delete'], 'field' => 'delete', 'align' => 'center', 'width' => '35px')
     );
@@ -831,41 +831,6 @@ function TST_notifyUser($email)
 	COM_emailNotification( $msgData );
 
 	return;
-}
-
-/**
-* Get an array of all groups this group belongs to.
-*
-* @param   basegroup   int     id of group
-* @return              array   array of all groups 'basegroup' belongs to
-*
-*/
-function TST_getGroupList ($basegroup)
-{
-    global $_TABLES;
-
-    $to_check = array ();
-    array_push ($to_check, $basegroup);
-
-    $checked = array ();
-
-    while (sizeof ($to_check) > 0) {
-        $thisgroup = array_pop ($to_check);
-        if ($thisgroup > 0) {
-            $result = DB_query ("SELECT ug_grp_id FROM {$_TABLES['group_assignments']} WHERE ug_main_grp_id = $thisgroup");
-            $numGroups = DB_numRows ($result);
-            for ($i = 0; $i < $numGroups; $i++) {
-                $A = DB_fetchArray ($result);
-                if (!in_array ($A['ug_grp_id'], $checked)) {
-                    if (!in_array ($A['ug_grp_id'], $to_check)) {
-                        array_push ($to_check, $A['ug_grp_id']);
-                    }
-                }
-            }
-            $checked[] = $thisgroup;
-        }
-    }
-    return $checked;
 }
 
 function testimonials_slider()

@@ -243,9 +243,12 @@ function TST_sendNotification($testid)
         $mailbody .= sprintf($LANG_TSTM01['mail_mod_link'],$_CONF['site_admin_url'].'/moderation.php');
         $mailbody .= '<br>';
 
+        $html2txt  = new Html2Text\Html2Text($mailbody,false);
+        $mailbody_text = trim($html2txt->get_text());
+
         $testimonials_grp_id = DB_getItem($_TABLES['groups'],'grp_id','grp_name="testimonials Admin"');
         if ( $testimonials_grp_id === NULL ) return;
-        $groups = TST_getGroupList($testimonials_grp_id);
+        $groups = SEC_getGroupList($testimonials_grp_id);
         $groupList = implode(',',$groups);
 	    $sql = "SELECT DISTINCT {$_TABLES['users']}.uid,username,fullname,email "
 	          ."FROM {$_TABLES['group_assignments']},{$_TABLES['users']} "
@@ -266,7 +269,7 @@ function TST_sendNotification($testid)
         }
         if ( $toCount > 0 ) {
             $msgData['htmlmessage'] = $mailbody;
-            $msgData['textmessage'] = $mailbody;
+            $msgData['textmessage'] = $mailbody_text;
             $msgData['subject'] = $LANG_TSTM01['mail_subject'];
             $msgData['from']['email'] = $_CONF['site_mail'];
             $msgData['from']['name'] = $_CONF['site_name'];
