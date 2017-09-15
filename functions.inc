@@ -630,6 +630,7 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
     if ( $_TST_CONF['centerblock_where'] != $where && $where != CENTERBLOCK_FORCE) {
         return;
     }
+    if ( $page > 1 OR !empty ($topic) ) return;
 
     $retval = '';
 
