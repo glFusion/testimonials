@@ -537,9 +537,9 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                     break;
                 case 'url':
                     if (empty($A['testid'])) {
-                        $props['url'] = COM_buildUrl($_CONF['site_url'].'/testimonials/index.php?id=' . $id);
+                        $props['url'] = $_CONF['site_url'].'/testimonials/index.php?id=' . $id;
                     } else {
-                        $props['url'] = COM_buildUrl($_CONF['site_url'].'/testimonials/index.php?id=' . $A['testid']);
+                        $props['url'] = $_CONF['site_url'].'/testimonials/index.php?id=' . $A['testid'];
                     }
                     break;
                 case 'label':
