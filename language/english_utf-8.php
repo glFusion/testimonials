@@ -25,7 +25,7 @@ $LANG_TSTM01 = array (
     'access_denied'     => 'Access Denied',
     'access_denied_msg' => 'You are not authorized to view this Page.  Your user name and IP have been recorded.',
     'admin'		        => 'Testimonials Admin',
-    'admin_help'        => 'Admin screen help text for testimonial plugin',
+    'admin_help'        => 'Testimonial administration. Allows you to create, edit and delete testimonials. You can also move testimonials to and from the submission queue.',
     'cancel'			=> 'Cancel',
     'client'			=> 'Client',
     'client_help'		=> 'Person giving testimonial',
@@ -116,7 +116,7 @@ $LANG_configselects['testimonials'] = array(
     0  => array('True' => 1, 'False' => 0 ),
     1  => array('Left Blocks' => 0, 'Right Blocks' => 1, 'All Blocks' => 2, 'No Blocks' => 3),
     2  => array('Yes' => 1, 'No' => 0 ),
-    3 => array('No Centerblock' => -1, 'Top of Page' => 1, 'After Featured Story' => 2, 'Bottom of Page' => 3),
+    3  => array('No Centerblock' => -1, 'Top of Page' => 1, 'After Featured Story' => 2, 'Bottom of Page' => 3),
 );
 
 ?>
