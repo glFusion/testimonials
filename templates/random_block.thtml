@@ -1,16 +1,18 @@
-<p>
-  {testimonial_text}
+<div class="testimonial testimonial-block">
+	<blockquote>
+	  {testimonial_text}
 {!if truncated}
- <a href="{testimonial_link}">{lang_read_full}</a>
+	 <a href="{testimonial_link}">{lang_read_full}</a>
 {!endif}
-</p>
-<p class="uk-text-right">
-  {client_name}
+	</blockquote>
+	<p class="uk-text-right">
+	  {client_name}
 {!if company_website}
-  <a href="{company_website}" target="_blank">
+	  <a href="{company_website}" target="_blank">
 {!endif}
-    <br>{company_name}
+	    <br>{company_name}
 {!if company_website}
-  </a>
+	  </a>
 {!endif}
-</p>
+	</p>
+</div>

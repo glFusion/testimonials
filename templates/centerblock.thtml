@@ -1,19 +1,18 @@
 <div class="uk-panel uk-panel-box uk-panel-box-primary uk-margin testimonial">
-    <h3><strong>{lang_customers_saying}</strong></h3>
-    <blockquote>
-    {testimonial_text}
+	<h3><strong>{lang_customers_saying}</strong></h3>
+	<blockquote>
+		{testimonial_text}
 {!if truncated}
- <a href="{testimonial_link}">{lang_read_full}</a>
+		<a href="{testimonial_link}">{lang_read_full}</a>
 {!endif}
-    </blockquote>
-    <footer>
-        <cite>
+	</blockquote>
+	<footer>
+		<cite>
 {!if company_url}
-            <a href="{company_website}" target="_blank">{client_name}{!if company_name} :: {company_name}{!endif}</a>
+			<a href="{company_website}" target="_blank">{client_name}{!if company_name} :: {company_name}{!endif}</a>
 {!else}
-            {client_name}{!if company_name} :: {company_name}{!endif}
+			{client_name}{!if company_name} :: {company_name}{!endif}
 {!endif}
-        </cite>
-    </footer>
-
+		</cite>
+	</footer>
 </div>
