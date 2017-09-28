@@ -537,9 +537,9 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                     break;
                 case 'url':
                     if (empty($A['testid'])) {
-                        $props['url'] = $_CONF['site_url'].'/testimonials/index.php?id=' . $id;
+                        $props['url'] = COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id=' . $id);
                     } else {
-                        $props['url'] = $_CONF['site_url'].'/testimonials/index.php?id=' . $A['testid'];
+                        $props['url'] = COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id=' . $A['testid']);
                     }
                     break;
                 case 'label':
@@ -653,7 +653,7 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
             'testimonial_text'  => nl2br(TST_truncate($A['text_full'],500,'...')),
             'client_name'       => $A['clientname'],
             'submit_date'       => $A['tst_date'],
-            'testimonial_link'  => $_CONF['site_url'].'/testimonials/index.php?id='.$A['testid'],
+            'testimonial_link'  => COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id='.$A['testid']),
             'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
             'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
         ),false,true);
@@ -785,7 +785,7 @@ function phpblock_testimonials()
             'testimonial_text'  => nl2br(TST_truncate($A['text_full'],300,'...')),
             'client_name'       => $A['clientname'],
             'submit_date'       => $A['tst_date'],
-            'testimonial_link'  => $_CONF['site_url'].'/testimonials/index.php?id='.$A['testid'],
+            'testimonial_link'  => COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id='.$A['testid']),
             'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
         ),false,true);
         if ( $A['company'] != '' ) $T->set_var('company_name',$A['company'],false,true);
