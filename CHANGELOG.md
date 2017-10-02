@@ -1,6 +1,6 @@
 Testimonials Plugin ChangeLog
 
-## v1.0.0
+## v1.0.0 (October 6, 2017)
   - CAPTCHA Support
   - Configuration options
   - Added pagination to testimonals list view
