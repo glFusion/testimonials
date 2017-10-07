@@ -117,7 +117,7 @@ function plugin_autouninstall_testimonials ()
         /* give the full name of the feature, as in the db */
         'features' => array('testimonials.admin'),
         /* give the full name of the block, including 'phpblock_', etc */
-        'php_blocks' => array('phpblock_testimonials'),
+        'php_blocks' => array('block_testimonials'),
         /* give all vars with their name */
         'vars'=> array()
     );
