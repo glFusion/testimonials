@@ -798,6 +798,20 @@ function phpblock_testimonials()
     return $retval;
 }
 
+function plugin_enablestatechange_testimonials( $enable )
+{
+    global $_TABLES;
+
+    if ( $enable == FALSE ) {
+        DB_query("UPDATE {$_TABLES['blocks']} SET is_enabled=0 WHERE name='block_testimonials'",1);
+    } else {
+        DB_query("UPDATE {$_TABLES['blocks']} SET is_enabled=1 WHERE name='block_testimonials'",1);
+    }
+
+    return 1;
+
+}
+
 /*
 	Truncated text to the nearest word based on a character count - substr()
 	http://www.beliefmedia.com/php-truncate-functions
