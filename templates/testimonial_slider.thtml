@@ -9,7 +9,7 @@
 
 			<div class="uk-overlay-panel uk-overlay-background uk-overlay-fade uk-flex uk-flex-center uk-flex-middle uk-text-center">
 				<div class="uk-container testimonial-slider" style="overflow:none;">
-					<blockquote>
+					<blockquote style="font-size:1.5em;">
 						{text_truncated}
 					</blockquote>
 					<footer>
