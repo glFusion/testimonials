@@ -71,6 +71,18 @@ The number of testimonials to display per page.
 
 Select whether to enable the Centerblock and where it should be displayed. The Centerblock will display a single random testimonial each time the index page is displayed.
 
+**Centerblock rotates through testimonials**
+
+If this is set to True - the center block will cycle (rotate) through 20 random testimonials. If set to False, only 1 random testimonial will be displayed.
+
+
+
+### Testimonials Blocks
+
+When you install the Testimonials Plugin, it will automatically create a Random Testimonial Block that will showcase your testimonials.
+
+You can edit the block (through the Command & Control -> Block Admin) to configure the block pull multiple testimonials and rotate through them. If you wish to enable this capability - Edit the block and set the Block Function to ```phpblock_testimonials(1)```
+
 ### License
 
 This program is free software; you can redistribute it and/or modify it under

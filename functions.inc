@@ -632,19 +632,42 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
     }
     if ( $page > 1 OR !empty ($topic) ) return;
 
+    $limit = 1;
+    $template = 'centerblock.thtml';
+
+    if ( isset($_TST_CONF['centerblock_rotate']) AND $_TST_CONF['centerblock_rotate'] == true ) {
+        $limit = 20;
+    }
+
     $retval = '';
 
     $sql = "SELECT testid,clientname,company,homepage,text_full,tst_date
 					FROM {$_TABLES['testimonials']} WHERE queued=0
-					ORDER BY RAND(NOW()) LIMIT 1";
+					ORDER BY RAND(NOW()) LIMIT " . $limit;
 
-    $result = DB_query($sql);
-    if (DB_numRows($result) == 1 ) {
+	$result = DB_query ($sql);
+	$num = DB_numRows ($result);
+
+	if ( $num === 0 ) return;
+
+    $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
+    $T->set_file ('page',$template);
+
+	$T->set_block('page','testimonials','tm');
+
+	for ($i = 0; $i < $num; $i++) {
         $A = DB_fetchArray($result);
-        $addhit = DB_query("update {$_TABLES['testimonials']} set views = views + 1 where testid = $A[testid]");
 
-        $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
-        $T->set_file ('form','centerblock.thtml');
+        $T->unset_var(array(
+            'testimonial_text',
+            'client_name',
+            'submit_date',
+            'testimonial_link',
+            'lang_read_full',
+            'truncated',
+            'company_name',
+            'company_website'
+        ));
 
         $testimonialText = TST_truncate($A['text_full'],300,'');
         $remaining       = trim(utf8_substr($A['text_full'],utf8_strlen($testimonialText)));
@@ -656,14 +679,15 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
             'testimonial_link'  => COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id='.$A['testid']),
             'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
             'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
-        ),false,true);
-        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company'],false,true);
-        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage'],false,true);
-        if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true,false,true);
-
-        $T->parse('output', 'form');
-        $retval .= $T->finish($T->get_var('output'));
+        ));
+        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company']);
+        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage']);
+        if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true);
+        $T->parse('tm','testimonials',true);
 	}
+    $T->parse('output', 'page');
+    $retval .= $T->finish($T->get_var('output'));
+
     return $retval;
 }
 
@@ -760,23 +784,40 @@ function plugin_ismoderator_testimonials()
 * block for the Testimonials plugin
 *
 */
-function phpblock_testimonials()
+function phpblock_testimonials($attributes = array(), $rotate = 0)
 {
     global $_CONF, $_TST_CONF, $_TABLES, $LANG_TSTM01;
 
     $retval = '';
 
+    $limit = 1;
+
+    if ( $rotate != 0 ) $limit = 20;
+
     $sql = "SELECT testid,clientname,company,homepage,text_full,tst_date
 					FROM {$_TABLES['testimonials']} WHERE queued=0
-					ORDER BY RAND(NOW()) LIMIT 1";
+					ORDER BY RAND(NOW()) LIMIT " . (int) $limit;
+
+    $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
+    $T->set_file ('form','random_block.thtml');
+
+    $T->set_block('form','testimonials','tm');
 
     $result = DB_query($sql);
-    if (DB_numRows($result) == 1 ) {
-        $A = DB_fetchArray($result);
-        $addhit = DB_query("update {$_TABLES['testimonials']} set views = views + 1 where testid = $A[testid]");
+    $numRows = DB_numRows($result);
+    if ( $numRows == 0 ) return '';
 
-        $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
-        $T->set_file ('form','random_block.thtml');
+    while ( $A = DB_fetchArray($result) ) {
+        $T->unset_var(array(
+            'testimonial_text',
+            'client_name',
+            'submit_date',
+            'testimonial_link',
+            'lang_read_full',
+            'truncated',
+            'company_name',
+            'company_website'
+        ));
 
         $testimonialText = TST_truncate($A['text_full'],300,'');
         $remaining       = trim(utf8_substr($A['text_full'],utf8_strlen($testimonialText)));
@@ -787,14 +828,18 @@ function phpblock_testimonials()
             'submit_date'       => $A['tst_date'],
             'testimonial_link'  => COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id='.$A['testid']),
             'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
-        ),false,true);
-        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company'],false,true);
-        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage'],false,true);
-        if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true,false,true);
+        ));
+        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company']);
+        if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage']);
+        if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true);
 
-        $T->parse('output', 'form');
-        $retval .= $T->finish($T->get_var('output'));
+        $T->parse('tm','testimonials',true);
 	}
+
+    $T->parse('output', 'form');
+    $retval .= $T->finish($T->get_var('output'));
+
+
     return $retval;
 }
 
@@ -819,16 +864,16 @@ function plugin_enablestatechange_testimonials( $enable )
 	http://php.net/manual/en/function.preg-match.php
 */
 function TST_truncate($string, $length, $trimmarker = '') {
-  $strlen = strlen($string);
-  /* mb_substr forces a break at $length if no word (space) boundary */
-  $string = trim(utf8_substr($string, 0, $strlen));
-  if ($strlen > $length) {
-   preg_match('/^.{1,' . ($length - strlen($trimmarker)) . '}\b/su', $string, $match);
-   $string = trim($match['0']) . $trimmarker;
+    $strlen = strlen($string);
+    /* mb_substr forces a break at $length if no word (space) boundary */
+    $string = trim(utf8_substr($string, 0, $strlen));
+    if ($strlen > $length) {
+        preg_match('/^.{1,' . ($length - strlen($trimmarker)) . '}\b/su', $string, $match);
+        $string = trim($match['0']) . $trimmarker;
     } else {
-   $string = trim($string);
-  }
- return $string;
+        $string = trim($string);
+    }
+    return $string;
 }
 
 function TST_notifyUser($email)
@@ -900,5 +945,4 @@ function testimonials_slider()
 
 	return $page;
 }
-
 ?>

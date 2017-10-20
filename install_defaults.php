@@ -39,6 +39,7 @@ $_TST_DEFAULTS = array(
     'speedlimit'            => 300,
     'per_page'              => 15,
     'centerblock_where'     => -1,
+    'centerblock_rotate'    => false,
 );
 
 /**
@@ -53,10 +54,8 @@ function plugin_initconfig_testimonials()
     $c = config::get_instance();
 
     if (!$c->group_exists('testimonials')) {
-
         $c->add('sg_main', NULL, 'subgroup', 0, 0, NULL, 0, true,'testimonials');
         $c->add('fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true,'testimonials');
-
         $c->add('displayblocks', $_TST_DEFAULTS['displayblocks'],'select', 0, 0, 1, 5, true, 'testimonials');
         $c->add('disable_submissions', $_TST_DEFAULTS['disable_submissions'],'select', 0, 0, 0, 10, true, 'testimonials');
         $c->add('anonymous_submit', $_TST_DEFAULTS['anonymous_submit'],'select', 0, 0, 2, 15, true, 'testimonials');
@@ -64,6 +63,7 @@ function plugin_initconfig_testimonials()
         $c->add('speedlimit', $_TST_DEFAULTS['speedlimit'],'text', 0, 0, NULL, 25, true, 'testimonials');
         $c->add('per_page', $_TST_DEFAULTS['per_page'],'text', 0, 0, NULL, 30, true, 'testimonials');
         $c->add('centerblock_where', $_TST_DEFAULTS['per_page'],'select', 0, 0, 3, 40, true, 'testimonials');
+        $c->add('centerblock_rotate', $_TST_DEFAULTS['centerblock_rotate'],'select', 0, 0, 0, 45, true, 'testimonials');
      }
      return true;
 }

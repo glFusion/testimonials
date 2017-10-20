@@ -101,6 +101,7 @@ $LANG_confignames['testimonials'] = array(
     'per_page'              => 'Number of Testimonails per page',
     'disable_submissions'   => 'Disable Testimonial Submissions',
     'centerblock_where'     => 'Enable Testimonials Centerblock',
+    'centerblock_rotate'    => 'Centerblock rotates through testimonials',
 
 );
 

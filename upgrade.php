@@ -49,7 +49,8 @@ function testimonials_upgrade()
             // no changes
 
         case '1.0.0' :
-            // no changes
+            $c = config::get_instance();
+            $c->add('centerblock_rotate', false,'select', 0, 0, 0, 45, true, 'testimonials');
 
         default:
             DB_query("UPDATE {$_TABLES['plugins']} SET pi_version='".$_TST_CONF['pi_version']."',pi_gl_version='".$_TST_CONF['gl_version']."' WHERE pi_name='testimonials' LIMIT 1");
