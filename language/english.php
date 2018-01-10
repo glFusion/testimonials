@@ -102,9 +102,10 @@ $LANG_confignames['testimonials'] = array(
     'disable_submissions'   => 'Disable Testimonial Submissions',
     'centerblock_where'     => 'Enable Testimonials Centerblock',
     'centerblock_rotate'    => 'Centerblock rotates through testimonials',
+
 );
 
-$LANG_configsubgroups['Testimonials'] = array(
+$LANG_configsubgroups['testimonials'] = array(
     'sg_main' => 'Main Settings',
 );
 

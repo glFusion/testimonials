@@ -105,7 +105,7 @@ $LANG_confignames['testimonials'] = array(
 
 );
 
-$LANG_configsubgroups['Testimonials'] = array(
+$LANG_configsubgroups['testimonials'] = array(
     'sg_main' => 'Main Settings',
 );
 

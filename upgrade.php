@@ -7,7 +7,7 @@
 * @license GNU General Public License version 2 or later
 *     http://www.opensource.org/licenses/gpl-license.php
 *
-*  Copyright (C) 2016-2017 by the following authors:
+*  Copyright (C) 2016-2018 by the following authors:
 *   Mark R. Evans   mark AT glfusion DOT org
 *
 *  Based on the Testimonials Plugin
@@ -51,6 +51,9 @@ function testimonials_upgrade()
         case '1.0.0' :
             $c = config::get_instance();
             $c->add('centerblock_rotate', false,'select', 0, 0, 0, 45, true, 'testimonials');
+
+        case '1.0.1' :
+            // no changes
 
         default:
             DB_query("UPDATE {$_TABLES['plugins']} SET pi_version='".$_TST_CONF['pi_version']."',pi_gl_version='".$_TST_CONF['gl_version']."' WHERE pi_name='testimonials' LIMIT 1");

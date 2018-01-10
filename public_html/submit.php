@@ -163,22 +163,31 @@ function saveSubmission()
     // Let plugins have a chance to check for spam
     $spamCheckText = $filter->Linkify($A['text_full']);
     $spamcheck = '<h1>' . $A['company'] . '</h1><p>' . $spamCheckText . '</p>';
-    $result = PLG_checkforSpam ($spamcheck, $_CONF['spamx']);
+    if (version_compare(GVERSION,'1.7.2','>=')) {
+        $spamData = array(
+            'ip'    => $_SERVER['REMOTE_ADDR']?:($_SERVER['HTTP_X_FORWARDED_FOR']?:$_SERVER['HTTP_CLIENT_IP']),
+            'email' => $A['email'],
+            'type'  => 'blog-post'
+        );
+        $result = PLG_checkforSpam ($spamcheck, $_CONF['spamx'],$spamData);
+    } else {
+        $result = PLG_checkforSpam ($spamcheck, $_CONF['spamx']);
+    }
     // Now check the result and display message if spam action was taken
     if ($result > 0) {
         $errors[] = $LANG_TSTM01['spam_identified'];
     }
-    if ( COM_isAnonUser() && function_exists('plugin_itemPreSave_spamx')) {
-       $spamCheckData = array(
-            'email'     => $A['email'],
-            'ip'        => $REMOTE_ADDR);
-
-        $msg = plugin_itemPreSave_spamx('testimonials',$spamCheckData);
-        if ( $msg ) {
-            $errors[] = $msg;
+    if (version_compare(GVERSION,'1.7.2','<')) {
+        if ( COM_isAnonUser() && function_exists('plugin_itemPreSave_spamx')) {
+           $spamCheckData = array(
+                'email'     => $A['email'],
+                'ip'        => $REMOTE_ADDR);
+            $msg = plugin_itemPreSave_spamx('testimonials',$spamCheckData);
+            if ( $msg ) {
+                $errors[] = $msg;
+            }
         }
     }
-
     if ( count($errors) > 0 ) {
         return submitEntry($A,$errors);
     }
