@@ -9,7 +9,7 @@
 * @license GNU General Public License version 2 or later
 *     http://www.opensource.org/licenses/gpl-license.php
 *
-*  Copyright (C) 2016-2017 by the following authors:
+*  Copyright (C) 2016-2018 by the following authors:
 *   Mark R. Evans   mark AT glfusion DOT org
 *
 *  Based on the Testimonials Plugin
@@ -655,6 +655,8 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
 
 	$T->set_block('page','testimonials','tm');
 
+    $filter = new \sanitizer();
+
 	for ($i = 0; $i < $num; $i++) {
         $A = DB_fetchArray($result);
 
@@ -673,14 +675,14 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
         $remaining       = trim(utf8_substr($A['text_full'],utf8_strlen($testimonialText)));
 
         $T->set_var(array(
-            'testimonial_text'  => nl2br(TST_truncate($A['text_full'],500,'...')),
-            'client_name'       => $A['clientname'],
+            'testimonial_text'  => nl2br(TST_truncate($filter->censor($A['text_full']),500,'...')),
+            'client_name'       => $filter->censor($A['clientname']),
             'submit_date'       => $A['tst_date'],
             'testimonial_link'  => COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id='.$A['testid']),
             'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
             'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
         ));
-        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company']);
+        if ( $A['company'] != '' ) $T->set_var('company_name',$filter->censor($A['company']));
         if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage']);
         if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true);
         $T->parse('tm','testimonials',true);
@@ -807,6 +809,8 @@ function phpblock_testimonials($attributes = array(), $rotate = 0)
     $numRows = DB_numRows($result);
     if ( $numRows == 0 ) return '';
 
+    $filter = new \sanitizer();
+
     while ( $A = DB_fetchArray($result) ) {
         $T->unset_var(array(
             'testimonial_text',
@@ -823,13 +827,13 @@ function phpblock_testimonials($attributes = array(), $rotate = 0)
         $remaining       = trim(utf8_substr($A['text_full'],utf8_strlen($testimonialText)));
 
         $T->set_var(array(
-            'testimonial_text'  => nl2br(TST_truncate($A['text_full'],300,'...')),
-            'client_name'       => $A['clientname'],
+            'testimonial_text'  => nl2br(TST_truncate($filter->censor($A['text_full']),300,'...')),
+            'client_name'       => $filter->censor($A['clientname']),
             'submit_date'       => $A['tst_date'],
             'testimonial_link'  => COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id='.$A['testid']),
             'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
         ));
-        if ( $A['company'] != '' ) $T->set_var('company_name',$A['company']);
+        if ( $A['company'] != '' ) $T->set_var('company_name',$filter->censor($A['company']));
         if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage']);
         if ( utf8_strlen($remaining) > 0 ) $T->set_var('truncated',true);
 

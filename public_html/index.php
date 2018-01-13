@@ -7,7 +7,7 @@
 * @license GNU General Public License version 2 or later
 *     http://www.opensource.org/licenses/gpl-license.php
 *
-*  Copyright (C) 2016-2017 by the following authors:
+*  Copyright (C) 2016-2018 by the following authors:
 *   Mark R. Evans   mark AT glfusion DOT org
 *
 *  Based on the Testimonials Plugin
@@ -52,6 +52,8 @@ if ( $tid != 0 ) {
 $data = DB_query ("SELECT COUNT(*) AS count FROM {$_TABLES['testimonials']} WHERE queued=0" . $where);
 $D = DB_fetchArray ($data);
 $num_pages = ceil ($D['count'] / $limit);
+
+$filter = new \sanitizer();
 
 $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
 
@@ -104,13 +106,13 @@ for ($i = 0; $i < $num; $i++) {
     }
     $T->set_var(array(
         'testid'            => $A['testid'],
-        'client'            => COM_highlightQuery($A['clientname'],$query),
-        'text_full'         => COM_highlightQuery(nl2br(trim($A['text_full'])),$query),
-        'text_truncated'    => COM_highlightQuery(nl2br($truncated),$query),
-        'company_name'      => COM_highlightQuery($A['company'],$query),
+        'client'            => COM_highlightQuery($filter->censor($A['clientname']),$query),
+        'text_full'         => COM_highlightQuery(nl2br(trim($filter->censor($A['text_full']))),$query),
+        'text_truncated'    => COM_highlightQuery(nl2br($filter->censor($truncated)),$query),
+        'company_name'      => COM_highlightQuery($filter->censor($A['company']),$query),
     ));
     if ( utf8_strlen($A['text_full']) > 300) {
-        $T->set_var('text_remaining',COM_highlightQuery(nl2br($remaining),$query));
+        $T->set_var('text_remaining',COM_highlightQuery(nl2br($filter->censor($remaining)),$query));
     } else {
         $T->unset_var('text_remaining');
     }
