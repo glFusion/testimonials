@@ -1,6 +1,8 @@
 Testimonials Plugin ChangeLog
 
-## v1.0.2
+## v1.0.2 (Unreleased)
+  - Implement new method to manage config items
+  - Changed how testimonials are censored - now censor on display instead of save
   - Improved integration with glFusion v1.7.2+ Spam checking
   - Fixed typo in language file that prevented one configuration heading to not display correctly
 

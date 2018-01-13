@@ -7,7 +7,7 @@
 * @license GNU General Public License version 2 or later
 *     http://www.opensource.org/licenses/gpl-license.php
 *
-*  Copyright (C) 2016-2017 by the following authors:
+*  Copyright (C) 2016-2018 by the following authors:
 *   Mark R. Evans   mark AT glfusion DOT org
 *
 *  Based on the Testimonials Plugin
@@ -28,20 +28,6 @@ if (!isset($_TST_CONF) || empty($_TST_CONF)) {
     require_once dirname(__FILE__) . '/testimonials.php';
 }
 
-/** Utility plugin default configurations
-*   @global array */
-global $_TST_DEFAULTS;
-$_TST_DEFAULTS = array(
-    'displayblocks'         => 0,
-    'disable_submissions'   => false,
-    'anonymous_submit'      => false,
-    'queue_submissions'     => true,
-    'speedlimit'            => 300,
-    'per_page'              => 15,
-    'centerblock_where'     => -1,
-    'centerblock_rotate'    => false,
-);
-
 /**
 *   Initialize Testimonials plugin configuration
 *
@@ -49,23 +35,27 @@ $_TST_DEFAULTS = array(
 */
 function plugin_initconfig_testimonials()
 {
-    global $_CONF, $_TST_CONF, $_TST_DEFAULTS;
+    global $_CONF;
 
     $c = config::get_instance();
 
     if (!$c->group_exists('testimonials')) {
-        $c->add('sg_main', NULL, 'subgroup', 0, 0, NULL, 0, true,'testimonials');
-        $c->add('fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true,'testimonials');
-        $c->add('displayblocks', $_TST_DEFAULTS['displayblocks'],'select', 0, 0, 1, 5, true, 'testimonials');
-        $c->add('disable_submissions', $_TST_DEFAULTS['disable_submissions'],'select', 0, 0, 0, 10, true, 'testimonials');
-        $c->add('anonymous_submit', $_TST_DEFAULTS['anonymous_submit'],'select', 0, 0, 2, 15, true, 'testimonials');
-        $c->add('queue_submissions', $_TST_DEFAULTS['queue_submissions'],'select', 0, 0, 0, 20, true, 'testimonials');
-        $c->add('speedlimit', $_TST_DEFAULTS['speedlimit'],'text', 0, 0, NULL, 25, true, 'testimonials');
-        $c->add('per_page', $_TST_DEFAULTS['per_page'],'text', 0, 0, NULL, 30, true, 'testimonials');
-        $c->add('centerblock_where', $_TST_DEFAULTS['per_page'],'select', 0, 0, 3, 40, true, 'testimonials');
-        $c->add('centerblock_rotate', $_TST_DEFAULTS['centerblock_rotate'],'select', 0, 0, 0, 45, true, 'testimonials');
+        require_once $_CONF['path'].'plugins/testimonails/sql/testimonials_config_data.php';
+
+        foreach ( $testimonialsConfigData AS $cfgItem ) {
+            $c->add(
+                $cfgItem['name'],
+                $cfgItem['default_value'],
+                $cfgItem['type'],
+                $cfgItem['subgroup'],
+                $cfgItem['fieldset'],
+                $cfgItem['selection_array'],
+                $cfgItem['sort'],
+                $cfgItem['set'],
+                $cfgItem['group']
+            );
+        }
      }
      return true;
 }
-
 ?>
