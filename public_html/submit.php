@@ -7,7 +7,7 @@
 * @license GNU General Public License version 2 or later
 *     http://www.opensource.org/licenses/gpl-license.php
 *
-*  Copyright (C) 2016-2017 by the following authors:
+*  Copyright (C) 2016-2018 by the following authors:
 *   Mark R. Evans   mark AT glfusion DOT org
 *
 *  Based on the Testimonials Plugin
@@ -132,9 +132,9 @@ function saveSubmission()
     $filter = new sanitizer();
 
     $filter->setPostmode('text');
-    $A['text_full']     = $filter->filterText($filter->censor($A['text_full']));
-    $A['clientname']    = $filter->filterText($filter->censor($A['clientname']));
-    $A['company']       = $filter->filterText($filter->censor($A['company']));
+    $A['text_full']     = $filter->filterText($A['text_full']);
+    $A['clientname']    = $filter->filterText($A['clientname']);
+    $A['company']       = $filter->filterText($A['company']);
     $A['homepage']      = $filter->sanitizeUrl($A['homepage']);
 
     if ( utf8_strlen(trim($A['clientname'])) === 0 ) {
