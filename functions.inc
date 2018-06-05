@@ -546,7 +546,7 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                     $props['label'] = $LANG_TSTM01['plugin_name'];
                     break;
                 case 'status':
-                    $props['status'] = $A['queued'];
+                    $props['status'] = $A['queued'] == 0 ? 1 : 0;
                     break;
                 case 'author' :
                     $props['author'] = $A['clientname'];
@@ -903,6 +903,8 @@ function testimonials_slider()
 
 	$slideCounter = 0;
 
+    $filter = new \sanitizer();
+
 	$T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
 
 	$T->set_file (array (
@@ -929,9 +931,9 @@ function testimonials_slider()
 
 		$T->set_var(array(
 			'testid'            => $A['testid'],
-			'client'            => $A['clientname'],
-			'text_truncated'    => nl2br($truncated),
-			'company_name'      => $A['company'],
+			'client'            => $filter->censor($A['clientname']),
+			'text_truncated'    => nl2br($filter->censor($truncated)),
+			'company_name'      => $filter->censor($A['company']),
 		));
 		if ( $A['homepage'] != '' ) {
 			$T->set_var('company_url',$A['homepage']);

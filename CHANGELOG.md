@@ -1,6 +1,7 @@
 Testimonials Plugin ChangeLog
 
 ## v1.0.2 (Unreleased)
+  - Fixed issue with returning the wrong status (queued / published) in getItemInfo
   - Implement new method to manage config items
   - Changed how testimonials are censored - now censor on display instead of save
   - Improved integration with glFusion v1.7.2+ Spam checking
