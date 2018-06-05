@@ -1,6 +1,6 @@
 Testimonials Plugin ChangeLog
 
-## v1.0.2 (Unreleased)
+## v1.0.2 (June 5, 2018)
   - Fixed issue with returning the wrong status (queued / published) in getItemInfo
   - Implement new method to manage config items
   - Changed how testimonials are censored - now censor on display instead of save
