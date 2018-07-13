@@ -114,11 +114,13 @@ function plugin_cclabel_testimonials()
 {
     global $_CONF, $LANG_TSTM01;
 
-    return array(
-        $LANG_TSTM01['plugin_name'],
-        $_CONF['site_admin_url'] . '/plugins/testimonials/index.php',
-        $_CONF['site_url'] . '/testimonials/images/testimonials.png'
-    );
+    if (SEC_hasRights('testimonials.admin')) {
+        return array(
+            $LANG_TSTM01['plugin_name'],
+            $_CONF['site_admin_url'] . '/plugins/testimonials/index.php',
+            $_CONF['site_url'] . '/testimonials/images/testimonials.png'
+        );
+    }
 }
 
 /**
