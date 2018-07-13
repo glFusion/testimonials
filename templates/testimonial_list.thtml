@@ -44,7 +44,7 @@
 
 {pagination}
 
-<script type="text/javascript">
+<script>
 	// <![CDATA[
 	function toggleTestimonial($id) {
 		if ( $( '#more' + $id ).is(":visible") ) {
