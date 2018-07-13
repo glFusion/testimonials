@@ -40,7 +40,7 @@ function plugin_initconfig_testimonials()
     $c = config::get_instance();
 
     if (!$c->group_exists('testimonials')) {
-        require_once $_CONF['path'].'plugins/testimonails/sql/testimonials_config_data.php';
+        require_once $_CONF['path'].'plugins/testimonials/sql/testimonials_config_data.php';
 
         foreach ( $testimonialsConfigData AS $cfgItem ) {
             $c->add(
