@@ -1,5 +1,9 @@
 Testimonials Plugin ChangeLog
 
+## v1.0.3 (July 13, 2018)
+  - Fixed typo preventing installation
+  - Fixed error where Testimonials Admin link would display to anyone with Command and Control access
+
 ## v1.0.2 (June 5, 2018)
   - Fixed issue with returning the wrong status (queued / published) in getItemInfo
   - Implement new method to manage config items
