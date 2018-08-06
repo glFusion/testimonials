@@ -1,5 +1,8 @@
 Testimonials Plugin ChangeLog
 
+## v1.0.4 (unreleased)
+  - Added Sitemap driver to allow testimonials to appear in online and XML sitemaps
+
 ## v1.0.3 (July 13, 2018)
   - Fixed typo preventing installation
   - Fixed error where Testimonials Admin link would display to anyone with Command and Control access
