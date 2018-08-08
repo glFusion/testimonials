@@ -58,6 +58,9 @@ function testimonials_upgrade()
         case '1.0.2' :
             // no changes
 
+        case '1.0.3' :
+            // no changes
+
         default:
             DB_query("UPDATE {$_TABLES['plugins']} SET pi_version='".$_TST_CONF['pi_version']."',pi_gl_version='".$_TST_CONF['gl_version']."' WHERE pi_name='testimonials' LIMIT 1");
             break;

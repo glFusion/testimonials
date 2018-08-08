@@ -1,6 +1,6 @@
 Testimonials Plugin ChangeLog
 
-## v1.0.4 (unreleased)
+## v1.0.4 (August 8, 2018)
   - Added Sitemap driver to allow testimonials to appear in online and XML sitemaps
 
 ## v1.0.3 (July 13, 2018)
