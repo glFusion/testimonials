@@ -1,5 +1,9 @@
 Testimonials Plugin ChangeLog
 
+## v1.0.5 (unreleased)
+  - Fixed SpamX integration
+  - Form standardization
+
 ## v1.0.4 (August 8, 2018)
   - Added Sitemap driver to allow testimonials to appear in online and XML sitemaps
 
