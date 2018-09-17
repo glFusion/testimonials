@@ -114,13 +114,25 @@ $testimonialsConfigData = array(
     ),
 
     array(
+        'name' => 'enable_truncate',
+        'default_value' => true,
+        'type' => 'select',
+        'subgroup' => 0,
+        'fieldset' => 0,
+        'selection_array' => 0,
+        'sort' => 230,
+        'set' => TRUE,
+        'group' => 'testimonials'
+    ),
+
+    array(
         'name' => 'centerblock_where',
         'default_value' => -1,
         'type' => 'select',
         'subgroup' => 0,
         'fieldset' => 0,
         'selection_array' => 3,
-        'sort' => 230,
+        'sort' => 240,
         'set' => TRUE,
         'group' => 'testimonials'
     ),
@@ -132,7 +144,7 @@ $testimonialsConfigData = array(
         'subgroup' => 0,
         'fieldset' => 0,
         'selection_array' => 0,
-        'sort' => 240,
+        'sort' => 250,
         'set' => TRUE,
         'group' => 'testimonials'
     ),

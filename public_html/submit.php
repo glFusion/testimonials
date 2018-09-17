@@ -96,6 +96,8 @@ function submitEntry( $A = array(), $errors = array() )
         $T->set_var ('captcha','');
     }
 
+    PLG_templateSetVars('testimonials', $T);
+
     $errorMessage = '';
     if ( count($errors) > 0 ) {
         $errorMessage = implode("<br>",$errors);
