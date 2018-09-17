@@ -9,7 +9,7 @@
 * @license GNU General Public License version 2 or later
 *     http://www.opensource.org/licenses/gpl-license.php
 *
-*  Copyright (C) 2016-2017 by the following authors:
+*  Copyright (C) 2016-2018 by the following authors:
 *   Mark R. Evans   mark AT glfusion DOT org
 *
 *  Based on the Testimonials Plugin
@@ -102,7 +102,7 @@ $LANG_confignames['testimonials'] = array(
     'disable_submissions'   => 'Disable Testimonial Submissions',
     'centerblock_where'     => 'Enable Testimonials Centerblock',
     'centerblock_rotate'    => 'Centerblock rotates through testimonials',
-
+    'enable_truncate'       => 'Truncate Long Testimonials',
 );
 
 $LANG_configsubgroups['testimonials'] = array(

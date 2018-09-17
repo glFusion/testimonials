@@ -1,6 +1,8 @@
 Testimonials Plugin ChangeLog
 
-## v1.0.5 (unreleased)
+## v1.0.5 (September 17, 2018)
+  - New configuration option to control if the testimonial index will truncate long testimonials
+  - Fixed issue where search results were not filtered by owner id when searching by author
   - Fixed SpamX integration
   - Form standardization
 

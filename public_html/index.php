@@ -18,7 +18,6 @@
 
 require_once '../lib-common.php';
 
-
 /*
 * Main Function
 */
@@ -96,7 +95,7 @@ $T->set_block('page','testimonials','tm');
 for ($i = 0; $i < $num; $i++) {
     $A = DB_fetchArray ($result);
 
-    if ($tid == 0 ) {
+    if ($tid == 0 && $_TST_CONF['enable_truncate'] == true) {
         $truncated = TST_truncate($A['text_full'], 500,'');
         $remaining = utf8_substr($A['text_full'],utf8_strlen($truncated));
     } else {
