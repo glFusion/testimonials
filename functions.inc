@@ -27,6 +27,7 @@ $_TST_CONF = $tst_config->get_config('testimonials');
 
 if ( !isset($_TST_CONF['disable_submissions'] ) ) $_TST_CONF['disable_submissions'] = false;
 if ( !isset($_TST_CONF['centerblock_where'] ) ) $_TST_CONF['centerblock_where'] = -1;
+if ( !isset($_TST_CONF['enable_truncate'])) $_TST_CONF['enable_truncate'] = true;
 
 /**
 * Language file Include
@@ -400,6 +401,10 @@ function plugin_dopluginsearch_testimonials($query, $datestart, $dateend, $topic
     $sql = " SELECT testid AS id, text_full AS description,text_full,UNIX_TIMESTAMP(tst_date) AS date, views AS hits, CONCAT(clientname,' ',company) AS title, CONCAT('/testimonials/index.php?id=',testid) AS url ";
     $sql .= "FROM {$_TABLES['testimonials']} ";
     $sql .= "WHERE queued = 0 ";
+
+    if (!empty ($author)) {
+        $sql .= " AND (owner_uid = '".DB_escapeString($author)."') ";
+    }
 
     $search = new SearchCriteria('testimonials', 'Testimonials');
     $columns = array('text_full');
