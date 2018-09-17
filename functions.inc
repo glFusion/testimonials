@@ -403,7 +403,7 @@ function plugin_dopluginsearch_testimonials($query, $datestart, $dateend, $topic
     $sql .= "WHERE queued = 0 ";
 
     if (!empty ($author)) {
-        $sql .= " AND (owner_uid = '".DB_escapeString($author)."') ";
+        $sql .= " AND (owner_id = '".DB_escapeString($author)."') ";
     }
 
     $search = new SearchCriteria('testimonials', 'Testimonials');
