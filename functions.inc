@@ -493,15 +493,15 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
 
     if ($id == '*') {
         $where = '';
-        $permOp = 'WHERE queued=0 ';
+        $permOp = ' WHERE queued=0 ';
     } else {
         $where = " WHERE testid = '" . DB_escapeString($id) . "' ";
-        $permOp = 'AND';
+        $permOp = ' AND ';
     }
 
     $sql = "SELECT " . implode(',', $fields)
             . " FROM {$_TABLES['testimonials']} "
-            . " " . $where;
+            . " " . $where . $permOp;
     if ($id != '*') {
         $sql .= ' LIMIT 1';
     }
