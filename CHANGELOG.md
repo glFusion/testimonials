@@ -1,5 +1,9 @@
 Testimonials Plugin ChangeLog
 
+## v1.0.7 (Unreleased)
+  - Fixed issue where getItemInfo returned queued items in master list
+  - View all Testimonials prompt was always displaying - should only display when viewing a single testimonial
+
 ## v1.0.6 (September 17, 2018)
   - Fixed typo in search that caused crash
 
