@@ -88,7 +88,7 @@ function testimonials_upgrade()
 
 function testimonials_update_config()
 {
-    global $_CONF, $_AC_CONF, $_TABLES;
+    global $_CONF, $_TST_CONF, $_TABLES;
 
     $c = config::get_instance();
 
