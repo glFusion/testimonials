@@ -469,6 +469,7 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                 $fields[] = 'queued';
                 break;
             case 'author' :
+                break;
             case 'author_name' :
                 $fields[] = 'clientname';
                 break;
@@ -493,13 +494,12 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
 
     if ($id == '*') {
         $where = '';
-        $permOp = 'WHERE queued=0 ';
+        $permOp = ' WHERE queued=0 ';
     } else {
         $where = " WHERE testid = '" . DB_escapeString($id) . "' ";
-        $permOp = 'AND';
     }
 
-    $sql = "SELECT " . implode(',', $fields)
+    $sql = "SELECT owner_id," . implode(',', $fields)
             . " FROM {$_TABLES['testimonials']} "
             . " " . $where;
     if ($id != '*') {
@@ -556,7 +556,7 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                     $props['status'] = $A['queued'] == 0 ? 1 : 0;
                     break;
                 case 'author' :
-                    $props['author'] = $A['clientname'];
+                    $props['author'] = $A['owner_id'];
                     break;
                 case 'author_name' :
                     $props['author_name'] = $A['clientname'];
@@ -568,7 +568,7 @@ function plugin_getiteminfo_testimonials($id, $what, $uid = 0, $options = array(
                     $p_anon = 0;
                     $p_member = 0;
                     $props['perms'] = array(
-                        'owner_id' => 2,
+                        'owner_id' => $A['owner_id'],
                         'group_id' => 3,
                         'perm_owner' => 3,
                         'perm_group' => 2,

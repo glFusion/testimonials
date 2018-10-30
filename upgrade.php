@@ -67,6 +67,9 @@ function testimonials_upgrade()
         case '1.0.5' :
             // no changes
 
+        case '1.0.6' :
+            // no changes
+
         default:
             DB_query("UPDATE {$_TABLES['plugins']} SET pi_version='".$_TST_CONF['pi_version']."',pi_gl_version='".$_TST_CONF['gl_version']."' WHERE pi_name='testimonials' LIMIT 1");
             break;
@@ -85,7 +88,7 @@ function testimonials_upgrade()
 
 function testimonials_update_config()
 {
-    global $_CONF, $_AC_CONF, $_TABLES;
+    global $_CONF, $_TST_CONF, $_TABLES;
 
     $c = config::get_instance();
 

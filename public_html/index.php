@@ -101,6 +101,8 @@ for ($i = 0; $i < $num; $i++) {
     } else {
         $truncated = $A['text_full'];
         $remaining = "";
+    }
+    if ($tid != 0) {
         $T->set_var('single_testimonial',true);
     }
     $T->set_var(array(
