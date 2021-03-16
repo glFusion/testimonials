@@ -15,9 +15,9 @@
 					<footer>
 						<cite>
 {!if company_url}
-							<a href="{company_url}" target="_blank">{client}{!if company_name} :: {company_name}{!endif}</a>
+							<a href="{company_url}" target="_blank">{client}{!if company_name} :: {company_name}{!endif}</a>{!if date} :: {date}{!endif}
 {!else}
-							{client}{!if company_name} :: {company_name}{!endif}
+							{client}{!if company_name} :: {company_name}{!endif}{!if date} :: {date}{!endif}
 {!endif}
 						</cite>
 					</footer>
@@ -39,5 +39,3 @@
 	<!-- END dotnav -->
 	</ul>
 </div>
-
-

@@ -12,9 +12,9 @@
 			<footer>
 				<cite>
 {!if company_url}
-					<a href="{company_website}" target="_blank">{client_name}{!if company_name} :: {company_name}{!endif}</a>
+					<a href="{company_website}" target="_blank">{client_name}{!if company_name} :: {company_name}{!endif}</a>{!if date} :: {date}{!endif}
 {!else}
-					{client_name}{!if company_name} :: {company_name}{!endif}
+					{client_name}{!if company_name} :: {company_name}{!endif}{!if date} :: {date}{!endif}
 {!endif}
 				</cite>
 			</footer>

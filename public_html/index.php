@@ -54,6 +54,8 @@ $num_pages = ceil ($D['count'] / $limit);
 
 $filter = new \sanitizer();
 
+$dt = new Date('now',$_USER['tzid']);
+
 $T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
 
 $T->set_file (array (
@@ -62,7 +64,7 @@ $T->set_file (array (
 
 $T->set_var ('header', $LANG_TSTM01['header']);
 
-$sql = "SELECT testid,clientname,company,text_full,homepage "
+$sql = "SELECT testid,clientname,company,text_full,homepage, UNIX_TIMESTAMP(tst_date) AS tst_date  "
        ."FROM {$_TABLES['testimonials']} WHERE queued=0 "
        . $where
        ."ORDER BY tst_date, testid DESC "
@@ -105,12 +107,17 @@ for ($i = 0; $i < $num; $i++) {
     if ($tid != 0) {
         $T->set_var('single_testimonial',true);
     }
+
+    $dt->setTimestamp($A['tst_date']);
+    $tst_date = $dt->format($_CONF['shortdate'],true);
+
     $T->set_var(array(
         'testid'            => $A['testid'],
         'client'            => COM_highlightQuery($filter->censor($A['clientname']),$query),
         'text_full'         => COM_highlightQuery(nl2br(trim($filter->censor($A['text_full']))),$query),
         'text_truncated'    => COM_highlightQuery(nl2br($filter->censor($truncated)),$query),
         'company_name'      => COM_highlightQuery($filter->censor($A['company']),$query),
+        'date'              => $tst_date,
     ));
     if ( utf8_strlen($A['text_full']) > 300) {
         $T->set_var('text_remaining',COM_highlightQuery(nl2br($filter->censor($remaining)),$query));
