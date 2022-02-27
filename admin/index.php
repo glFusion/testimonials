@@ -265,10 +265,12 @@ function editEntry($mode,$testid='')
         'lang_in_queue'     => $LANG_TSTM01['in_queue'],
     ));
 
+    $A = false;
     if ($mode == 'edit' && ($testid != "" || $testid != 0)) {
         $result = DB_query ("SELECT * FROM {$_TABLES['testimonials']} WHERE testid = ".(int) $testid);
         $A = DB_fetchArray($result);
-    } else {
+    }
+    if ($A === false) {
         $A['testid'] = '';
         $A['clientname'] = '';
         $A['company'] = '';
@@ -279,7 +281,6 @@ function editEntry($mode,$testid='')
         $A['email']     = $_USER['email'];
         $A['owner_id']  = $_USER['uid'];
     }
-
     $user_select= COM_optionList($_TABLES['users'], 'uid,username',$A['owner_id']);
     $queueChecked = '';
     if ( $A['queued'] ) {
@@ -323,7 +324,7 @@ function tst_admin_menu($action)
         array( 'url' => $_CONF['site_admin_url'].'/plugins/testimonials/index.php?list=x','text' => $LANG_TSTM01['plugin_admin'],'active' => ($action == 'list' ? true : false)),
         array( 'url' => $_CONF['site_admin_url'].'/plugins/testimonials/index.php?edit=x','text'=> ($action == 'edit_existing' ? $LANG_TSTM01['edit'] : $LANG_TSTM01['create_new']), 'active'=> ($action == 'edit' || $action == 'edit_existing' ? true : false)),
         array( 'url' => $_CONF['site_url'].'/testimonials/index.php','text'=> 'Testimonials Page', 'active'=> false),
-        array( 'url' => $_CONF['site_admin_url'], 'text' => $LANG_ADMIN['admin_home'])
+        array( 'url' => $_CONF['site_admin_url'].'/index.php', 'text' => $LANG_ADMIN['admin_home'])
     );
 
     $retval = '<h2>'.$LANG_TSTM01['plugin_name'].'</h2>';

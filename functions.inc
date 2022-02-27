@@ -9,7 +9,7 @@
 * @license GNU General Public License version 2 or later
 *     http://www.opensource.org/licenses/gpl-license.php
 *
-*  Copyright (C) 2016-2018 by the following authors:
+*  Copyright (C) 2016-2021 by the following authors:
 *   Mark R. Evans   mark AT glfusion DOT org
 *
 *  Based on the Testimonials Plugin
@@ -359,7 +359,7 @@ function plugin_getconfigelementhelp_testimonials($option, $doclang='english')
 
     $doc_url = $_CONF['site_url'] . '/testimonials/docs/'.$doclang.'/config.html';
 
-     if (empty($doc_url))
+    if (empty($doc_url) || !file_exists($doc_url))
         return false;
 
     if (!empty($option)) {
@@ -646,9 +646,11 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
         $limit = 20;
     }
 
+    $dt = new Date('now',$_USER['tzid']);
+
     $retval = '';
 
-    $sql = "SELECT testid,clientname,company,homepage,text_full,tst_date
+    $sql = "SELECT testid,clientname,company,homepage,text_full,UNIX_TIMESTAMP(tst_date) AS tst_date
 					FROM {$_TABLES['testimonials']} WHERE queued=0
 					ORDER BY RAND(NOW()) LIMIT " . $limit;
 
@@ -681,6 +683,9 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
         $testimonialText = TST_truncate($A['text_full'],300,'');
         $remaining       = trim(utf8_substr($A['text_full'],utf8_strlen($testimonialText)));
 
+        $dt->setTimestamp($A['tst_date']);
+        $tst_date = $dt->format($_CONF['shortdate'],true);
+
         $T->set_var(array(
             'testimonial_text'  => nl2br(TST_truncate($filter->censor($A['text_full']),500,'...')),
             'client_name'       => $filter->censor($A['clientname']),
@@ -688,6 +693,7 @@ function plugin_centerblock_testimonials ($where = 1, $page = 1, $topic = '')
             'testimonial_link'  => COM_buildURL($_CONF['site_url'].'/testimonials/index.php?id='.$A['testid']),
             'lang_read_full'    => $LANG_TSTM01['read_full_testimonial'],
             'lang_customers_saying' => $LANG_TSTM01['customers_saying'],
+            'date'              => $tst_date,
         ));
         if ( $A['company'] != '' ) $T->set_var('company_name',$filter->censor($A['company']));
         if ( $A['homepage'] != '' ) $T->set_var('company_website',$A['homepage']);
@@ -906,11 +912,13 @@ function TST_notifyUser($email)
 
 function testimonials_slider()
 {
-	global $_CONF, $_TST_CONF, $_TABLES;
+	global $_CONF, $_USER, $_TST_CONF, $_TABLES;
 
 	$slideCounter = 0;
 
     $filter = new \sanitizer();
+
+    $dt = new Date('now',$_USER['tzid']);
 
 	$T = new Template ($_CONF['path'] . 'plugins/testimonials/templates');
 
@@ -918,7 +926,7 @@ function testimonials_slider()
 		'page' => 'testimonial_slider.thtml',
 	));
 
-	$sql = "SELECT testid,clientname,company,text_full,homepage "
+	$sql = "SELECT testid,clientname,company,text_full,homepage,UNIX_TIMESTAMP(tst_date) AS tst_date "
 		   ."FROM {$_TABLES['testimonials']} WHERE queued=0 "
 		   ."ORDER BY tst_date, testid DESC "
 		   ."LIMIT 20";
@@ -935,12 +943,15 @@ function testimonials_slider()
 		$A = DB_fetchArray ($result);
 
 		$truncated = TST_truncate($A['text_full'], 700,'...');
+        $dt->setTimestamp($A['tst_date']);
+        $tst_date = $dt->format($_CONF['shortdate'],true);
 
 		$T->set_var(array(
 			'testid'            => $A['testid'],
 			'client'            => $filter->censor($A['clientname']),
 			'text_truncated'    => nl2br($filter->censor($truncated)),
 			'company_name'      => $filter->censor($A['company']),
+            'date'              => $tst_date,
 		));
 		if ( $A['homepage'] != '' ) {
 			$T->set_var('company_url',$A['homepage']);
