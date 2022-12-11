@@ -32,12 +32,17 @@ if ( !isset($_TST_CONF['enable_truncate'])) $_TST_CONF['enable_truncate'] = true
 /**
 * Language file Include
 */
-$langfile = $_CONF['path'] . 'plugins/testimonials/language/' . $_CONF['language'] . '.php';
+$langfile = $_CONF['language'] . '.php';
+$langpath = __DIR__ . '/language/';
+if (!file_exists ($langpath . $langfile)) {
+    $langfile = 'english_utf-8.php';
+}
+include_once $langpath . $langfile;
 
-if (file_exists ($langfile)) {
-    include_once $langfile;
-} else {
-    include_once $_CONF['path'] . 'plugins/testimonials/language/english_utf-8.php';
+// Include a matching custom language file if available.
+$langpath .= 'custom/';
+if (file_exists($langpath . $langfile)) {
+    include_once $langpath . $langfile;
 }
 
 /*
