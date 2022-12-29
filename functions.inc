@@ -879,6 +879,37 @@ function plugin_enablestatechange_testimonials( $enable )
 
 }
 
+/**
+ * Return the items that should be removed with the plugin.
+ *
+ * @return  array   Array of items to be removed.
+ */
+function plugin_autouninstall_testimonials()
+{
+    $out = array (
+        // Give the name of the tables, without $_TABLES[]
+        'tables' => array(
+            'testimonials',
+        ),
+        // Give the full name of the group, as in the db
+        'groups' => array(
+            'testimonials Admin',
+        ),
+        // Give the full name of the feature, as in the db
+        'features' => array(
+            'testimonials.admin',
+        ),
+        // Give the full name of the block, including 'phpblock_', etc
+        'php_blocks' => array(
+            'phpblock_testimonials',
+        ),
+        // List all vars by name
+        'vars'=> array(
+        ),
+    );
+    return $out;
+}
+
 /*
 	Truncated text to the nearest word based on a character count - substr()
 	http://www.beliefmedia.com/php-truncate-functions
